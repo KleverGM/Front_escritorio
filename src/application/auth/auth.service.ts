@@ -3,11 +3,11 @@ import type { AuthTokens, LoginPayload, RegisterPayload } from "../../domain/aut
 
 export const authService = {
   async login(payload: LoginPayload): Promise<AuthTokens> {
-    const res = await publicHttp.post<AuthTokens>("/auth/login", payload);
+    const res = await publicHttp.post<AuthTokens>("/users/login/", payload);
     return res.data;
   },
 
   async register(payload: RegisterPayload): Promise<void> {
-    await publicHttp.post("/auth/register", payload);
+    await publicHttp.post("/users/register/", payload);
   }
 };

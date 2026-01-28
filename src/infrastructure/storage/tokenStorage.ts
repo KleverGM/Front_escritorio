@@ -11,9 +11,15 @@ export const tokenStorage = {
   set(access: string, refresh: string) {
     localStorage.setItem(ACCESS_KEY, access);
     localStorage.setItem(REFRESH_KEY, refresh);
+    try {
+      window.dispatchEvent(new Event('cursos_token_change'));
+    } catch {}
   },
   clear() {
     localStorage.removeItem(ACCESS_KEY);
     localStorage.removeItem(REFRESH_KEY);
+    try {
+      window.dispatchEvent(new Event('cursos_token_change'));
+    } catch {}
   }
 };
