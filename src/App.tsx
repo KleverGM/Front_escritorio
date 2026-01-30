@@ -15,6 +15,8 @@ import CursosHome from "./presentation/pages/private/CursosHome";
 import CrearCursosLayouts from "./presentation/layouts/CrearCursosLayouts";
 import CrearNotificacion from "./presentation/pages/private/CrearNotificacion";
 import Notificaciones from "./presentation/pages/private/Notificaciones";
+import Profile from "./presentation/pages/private/Profile";
+import EditProfile from "./presentation/pages/private/EditProfile";
 
 export default function App() {
   const auth = useAuth();
@@ -62,6 +64,10 @@ export default function App() {
             <Route path="notificaciones">
               <Route index element={<Notificaciones />} />
               <Route path="create" element={<CrearNotificacion />} />
+            </Route>
+            <Route path="profile">
+              <Route index element={<Profile />} />
+              <Route path="edit" element={<EditProfile />} />
             </Route>
         </Route>
       </Routes>
