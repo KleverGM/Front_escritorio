@@ -8,10 +8,10 @@ type JwtPayload = Record<string, any> | null;
 
 function parseJwt(token: string): JwtPayload {
   try {
-    const parts = token.split('.');
+    const parts = token.split(".");
     if (parts.length < 2) return null;
     const payload = parts[1];
-    const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    const json = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
     return JSON.parse(decodeURIComponent(escape(json)));
   } catch (e) {
     return null;
@@ -51,7 +51,10 @@ export function useAuth() {
       }
 
       // If token contains direct claims like username/first_name, use them
-      const maybeUserFromClaims = (payload.username || payload.first_name || payload.email) ? payload : null;
+      const maybeUserFromClaims =
+        payload.username || payload.first_name || payload.email
+          ? payload
+          : null;
       if (maybeUserFromClaims) {
         if (mounted) setUser(maybeUserFromClaims);
         return;
@@ -68,7 +71,7 @@ export function useAuth() {
         // try /users/me/ first (common), fallback to /users/{id}/
         let res: any = null;
         try {
-          res = await authHttp.get('/users/me/');
+          res = await authHttp.get("/users/me/");
         } catch (e) {
           res = await authHttp.get(`/users/${userId}/`);
         }
@@ -84,13 +87,13 @@ export function useAuth() {
     };
   }, [access]);
 
-  const login = async (username: string, password: string) => {
-    const tokens = await authService.login({ username, password });
+  const login = async (email: string, password: string) => {
+    const tokens = await authService.login({ email, password });
     tokenStorage.set(tokens.access, tokens.refresh);
     setAccess(tokens.access);
     try {
       // notify other hook instances in the same window
-      window.dispatchEvent(new Event('cursos_token_change'));
+      window.dispatchEvent(new Event("cursos_token_change"));
     } catch {}
   };
 
@@ -103,7 +106,7 @@ export function useAuth() {
     tokenStorage.clear();
     setAccess(null);
     try {
-      window.dispatchEvent(new Event('cursos_token_change'));
+      window.dispatchEvent(new Event("cursos_token_change"));
     } catch {}
   };
 
@@ -112,11 +115,11 @@ export function useAuth() {
     function onChange() {
       setAccess(tokenStorage.getAccess());
     }
-    window.addEventListener('cursos_token_change', onChange);
-    window.addEventListener('storage', onChange);
+    window.addEventListener("cursos_token_change", onChange);
+    window.addEventListener("storage", onChange);
     return () => {
-      window.removeEventListener('cursos_token_change', onChange);
-      window.removeEventListener('storage', onChange);
+      window.removeEventListener("cursos_token_change", onChange);
+      window.removeEventListener("storage", onChange);
     };
   }, []);
 
