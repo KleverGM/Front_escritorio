@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;700&family=Pacifico&display=swap');
+
+@import "tailwindcss";
+
+/* Map custom font utility names used across components:
+   - `font-bebasneue` => Bebas Neue
+   - `font-oswald` => Oswald
+   - `font-cursive` => Pacifico
+*/
+
