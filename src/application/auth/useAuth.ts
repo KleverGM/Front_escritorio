@@ -60,24 +60,22 @@ export function useAuth() {
         return;
       }
 
-      // If token only has user_id, try fetching profile from API
+      // Solo si no hay información suficiente en el token, intentar cargar del backend
       const userId = payload.user_id ?? payload.sub ?? null;
-      if (!userId) {
+      if (!userId || isNaN(Number(userId))) {
         if (mounted) setUser(null);
         return;
       }
 
+      // Intentar cargar solo con el ID del usuario (no usar /users/me/)
       try {
-        // try /users/me/ first (common), fallback to /users/{id}/
-        let res: any = null;
-        try {
-          res = await authHttp.get("/users/me/");
-        } catch (e) {
-          res = await authHttp.get(`/users/${userId}/`);
-        }
+        const res = await authHttp.get(`/users/${userId}/`);
         if (mounted) setUser(res?.data ?? null);
       } catch (e) {
-        if (mounted) setUser(null);
+        console.warn(
+          "No se pudo cargar el perfil del usuario, usando datos del token",
+        );
+        if (mounted) setUser(payload); // Usar lo que haya en el token
       }
     }
 
@@ -91,10 +89,31 @@ export function useAuth() {
     const tokens = await authService.login({ email, password });
     tokenStorage.set(tokens.access, tokens.refresh);
     setAccess(tokens.access);
+
+    // Decodificar el token para obtener el user_id
+    const payload = parseJwt(tokens.access);
+    const userId = payload?.user_id ?? payload?.sub ?? null;
+
+    // Intentar obtener el perfil del token primero
+    let perfil = payload?.user?.perfil ?? payload?.perfil ?? null;
+
+    // Si no está en el token, hacer petición al backend
+    if (!perfil && userId) {
+      try {
+        const res = await authHttp.get(`/users/${userId}/`);
+        perfil = res?.data?.perfil ?? null;
+      } catch (e) {
+        console.warn("No se pudo obtener el perfil del usuario", e);
+      }
+    }
+
     try {
       // notify other hook instances in the same window
       window.dispatchEvent(new Event("cursos_token_change"));
     } catch {}
+
+    // Retornar el perfil para que Login.tsx pueda redirigir correctamente
+    return perfil;
   };
 
   const register = async (payload: RegisterPayload) => {

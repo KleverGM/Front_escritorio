@@ -1,11 +1,24 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-export default function Register({ onRegister }: { onRegister: (u: string, e: string, p: string, f: string, l: string, t: string) => Promise<void> }) {
+import { ErrorMessage } from "../../components/common";
+export default function Register({
+  onRegister,
+}: {
+  onRegister: (
+    u: string,
+    e: string,
+    p: string,
+    f: string,
+    l: string,
+    t: string,
+  ) => Promise<void>;
+}) {
   const nav = useNavigate();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [tipoUsuario, setTipoUsuario] = useState("estudiante");
@@ -18,11 +31,21 @@ export default function Register({ onRegister }: { onRegister: (u: string, e: st
     e.preventDefault();
     setErr(null);
     setLoading(true);
-      try {
-        await onRegister(username, email, password, firstName, lastName, tipoUsuario);
-        setSuccess('Registro exitoso. Redirigiendo a iniciar sesión...');
-        // redirigir después de 2s
-        timerRef.current = setTimeout(() => nav("/login", { replace: true }), 2000);
+    try {
+      await onRegister(
+        username,
+        email,
+        password,
+        firstName,
+        lastName,
+        tipoUsuario,
+      );
+      setSuccess("Registro exitoso. Redirigiendo a iniciar sesión...");
+      // redirigir después de 2s
+      timerRef.current = setTimeout(
+        () => nav("/login", { replace: true }),
+        2000,
+      );
     } catch (e: any) {
       const data = e?.response?.data;
       if (data?.detail) setErr(data.detail);
@@ -33,131 +56,184 @@ export default function Register({ onRegister }: { onRegister: (u: string, e: st
     }
   };
 
-    useEffect(() => {
-      return () => {
-        if (timerRef.current) clearTimeout(timerRef.current);
-      };
-    }, []);
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center">
+      <div className="mx-auto w-full max-w-2xl p-6">
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <h2 className="text-3xl font-bold text-center">
+            Nos alegra conocerte
+          </h2>
+          <p className="text-sm text-gray-600 text-center mb-6">
+            Regístrate para comenzar tu aprendizaje.
+          </p>
 
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center">
-        <div className="mx-auto w-full max-w-2xl p-6">
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-center">Nos alegra conocerte</h2>
-            <p className="text-sm text-gray-600 text-center mb-6">Necesitamos registrarte primero.</p>
+          {err && <ErrorMessage message={err} className="mb-4" />}
 
-            {err && (
-              <div role="alert" aria-live="assertive" className="mb-4 rounded-md border border-rose-900/60 bg-rose-950/40 px-3 py-2 text-rose-200 text-sm">
-                {err}
-              </div>
-            )}
+          {success && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="mb-4 rounded-md border border-emerald-700/60 bg-emerald-900/40 px-3 py-2 text-emerald-200 text-sm"
+            >
+              {success}
+            </div>
+          )}
 
-            {success && (
-              <div role="status" aria-live="polite" className="mb-4 rounded-md border border-emerald-700/60 bg-emerald-900/40 px-3 py-2 text-emerald-200 text-sm">
-                {success}
-              </div>
-            )}
-
-            <form onSubmit={onSubmit}>
-              <div className="grid grid-cols-1 gap-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="firstName" className="block text-sm text-gray-700">Nombre</label>
-                    <input
-                      id="firstName"
-                      name="firstName"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      required
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="lastName" className="block text-sm text-gray-700">Apellido</label>
-                    <input
-                      id="lastName"
-                      name="lastName"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      required
-                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
-                    />
-                  </div>
-                </div>
-
+          <form onSubmit={onSubmit}>
+            <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="tipoUsuario" className="block text-sm text-gray-700">Tipo de usuario</label>
-                  <select
-                    id="tipoUsuario"
-                    name="tipoUsuario"
-                    value={tipoUsuario}
-                    onChange={(e) => setTipoUsuario(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                  <label
+                    htmlFor="firstName"
+                    className="block text-sm text-gray-700"
                   >
-                    <option value="estudiante">Estudiante</option>
-                    <option value="instructor">Instructor</option>
-                    <option value="administrador">Administrador</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="username" className="block text-sm text-gray-700">Usuario</label>
+                    Nombre
+                  </label>
                   <input
-                    id="username"
-                    name="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    id="firstName"
+                    name="firstName"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                     required
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm text-gray-700">Correo electrónico</label>
+                  <label
+                    htmlFor="lastName"
+                    className="block text-sm text-gray-700"
+                  >
+                    Apellido
+                  </label>
                   <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="lastName"
+                    name="lastName"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                     required
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
                   />
                 </div>
+              </div>
 
-                <div>
-                  <label htmlFor="password" className="block text-sm text-gray-700">Contraseña</label>
+              <div>
+                <label
+                  htmlFor="username"
+                  className="block text-sm text-gray-700"
+                >
+                  Usuario
+                </label>
+                <input
+                  id="username"
+                  name="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-sm text-gray-700">
+                  Correo electrónico
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm text-gray-700"
+                >
+                  Contraseña
+                </label>
+                <div className="relative mt-1">
                   <input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                    className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md bg-white text-sm"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-600 hover:text-gray-900"
+                  >
+                    {showPassword ? (
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                      </svg>
+                    )}
+                  </button>
                 </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full mt-2 py-3 bg-[#f8b31d] border-2 border-black text-lg rounded-md font-medium"
-                >
-                  {loading ? 'Registrando...' : 'Crear cuenta'}
-                </button>
               </div>
-            </form>
 
-            
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full mt-2 py-3 bg-[#f8b31d] border-2 border-black text-lg rounded-md font-medium"
+              >
+                {loading ? "Registrando..." : "Crear cuenta"}
+              </button>
+            </div>
+          </form>
 
-            <p className="mt-4 text-sm text-center text-gray-600">
-              ¿Ya tienes cuenta?{' '}
-              <Link to="/login" className="text-blue-600 hover:underline">Iniciar sesión</Link>
-            </p>
-          </div>
+          <p className="mt-4 text-sm text-center text-gray-600">
+            ¿Ya tienes cuenta?{" "}
+            <Link to="/login" className="text-blue-600 hover:underline">
+              Iniciar sesión
+            </Link>
+          </p>
         </div>
       </div>
-    );
+    </div>
+  );
 }

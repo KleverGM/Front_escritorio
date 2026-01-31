@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { authHttp } from "../../../infrastructure/http/httpClients";
+import {
+  LoadingSpinner,
+  ErrorMessage,
+  EmptyState,
+} from "../../components/common";
 
 type Curso = {
   id: number;
@@ -32,15 +37,21 @@ export default function CursosHome() {
       try {
         const params: any = { page_size: 100 };
         if (q) params.q = q;
-        const res = await authHttp.get("/cursos/", { params, headers: { 'Cache-Control': 'no-cache' } });
+        const res = await authHttp.get("/cursos/", {
+          params,
+          headers: { "Cache-Control": "no-cache" },
+        });
         if (!mounted) return;
         const data = res.data?.results ?? res.data ?? [];
         // filter out any stray/mock course matching known patterns (title/instructor/description)
-          // Show all courses returned by the API.
-          const filtered = Array.isArray(data) ? data : []
-          const total = typeof res.data?.count === 'number' ? res.data.count : filtered.length
-          setTotalCursos(total as number | null)
-          setCursos(filtered)
+        // Show all courses returned by the API.
+        const filtered = Array.isArray(data) ? data : [];
+        const total =
+          typeof res.data?.count === "number"
+            ? res.data.count
+            : filtered.length;
+        setTotalCursos(total as number | null);
+        setCursos(filtered);
       } catch (err: any) {
         setError(err?.message ?? "Error al cargar cursos");
       } finally {
@@ -59,41 +70,79 @@ export default function CursosHome() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="w-full px-2 sm:px-4 lg:px-6 py-6">
-        <h2 className="text-3xl font-bold text-center mb-2">Cursos recomendados</h2>
-        <p className="text-sm text-gray-600 text-center mb-6">Descubre cursos seleccionados para impulsar tu carrera — aprende a tu ritmo con instructores expertos.</p>
+        <h2 className="text-3xl font-bold text-center mb-2">
+          Cursos recomendados
+        </h2>
+        <p className="text-sm text-gray-600 text-center mb-6">
+          Descubre cursos seleccionados para impulsar tu carrera — aprende a tu
+          ritmo con instructores expertos.
+        </p>
 
-        {loading && <div className="text-center py-6">Cargando cursos...</div>}
-        {error && <div className="text-red-600 text-center py-4">{error}</div>}
+        {loading && <LoadingSpinner />}
+        {error && <ErrorMessage message={error} />}
 
         {/* Frase larga alineada a la izquierda con número inline */}
         <div className="w-full mb-6 pl-0">
           <p className="text-left text-lg md:text-xl lg:text-2xl font-semibold text-gray-800">
-            {totalCursos ?? '—'} esperando por ti!!
+            {totalCursos ?? "—"} esperando por ti!!
           </p>
         </div>
 
         {!loading && !error && (
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {cursos.length === 0 && <div className="text-center text-gray-600 col-span-full">No se encontraron cursos.</div>}
+            {cursos.length === 0 && (
+              <div className="col-span-full">
+                <EmptyState
+                  icon="📚"
+                  title="No se encontraron cursos"
+                  description="Intenta con otra búsqueda o vuelve más tarde"
+                />
+              </div>
+            )}
             {cursos.map((c) => (
-              <div key={c.id} className="rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm flex flex-col h-full">
+              <div
+                key={c.id}
+                className="rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm flex flex-col h-full"
+              >
                 {c.imagen ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={c.imagen} alt={c.titulo} className="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover" />
+                  <img
+                    src={c.imagen}
+                    alt={c.titulo}
+                    className="w-full h-64 sm:h-72 md:h-80 lg:h-96 object-cover"
+                  />
                 ) : (
-                  <div className="w-full h-64 sm:h-72 md:h-80 lg:h-96 bg-gray-100 flex items-center justify-center text-gray-400">No imagen</div>
+                  <div className="w-full h-64 sm:h-72 md:h-80 lg:h-96 bg-gray-100 flex items-center justify-center text-gray-400">
+                    No imagen
+                  </div>
                 )}
 
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
-                    <div className="text-2xl md:text-3xl font-semibold text-slate-900">{c.titulo}</div>
-                    <div className="text-sm text-slate-600 mt-1">{c.instructor ? `${c.instructor.first_name ?? ''} ${c.instructor.last_name ?? ''}`.trim() : ''}</div>
-                    <div className="text-sm text-gray-600 mt-3">{c.descripcion ? (c.descripcion.length > 240 ? c.descripcion.slice(0, 240) + '...' : c.descripcion) : ''}</div>
+                    <div className="text-2xl md:text-3xl font-semibold text-slate-900">
+                      {c.titulo}
+                    </div>
+                    <div className="text-sm text-slate-600 mt-1">
+                      {c.instructor
+                        ? `${c.instructor.first_name ?? ""} ${c.instructor.last_name ?? ""}`.trim()
+                        : ""}
+                    </div>
+                    <div className="text-sm text-gray-600 mt-3">
+                      {c.descripcion
+                        ? c.descripcion.length > 240
+                          ? c.descripcion.slice(0, 240) + "..."
+                          : c.descripcion
+                        : ""}
+                    </div>
                   </div>
 
                   <div className="mt-6 flex items-center justify-between">
-                    <div className="text-xl md:text-2xl font-bold">${c.precio ?? '0.00'}</div>
-                    <button className="ml-4 px-4 py-2 md:px-5 md:py-3 bg-[#f8b31d] rounded text-black font-medium">Ver</button>
+                    <div className="text-xl md:text-2xl font-bold">
+                      ${c.precio ?? "0.00"}
+                    </div>
+                    <button className="ml-4 px-4 py-2 md:px-5 md:py-3 bg-[#f8b31d] rounded text-black font-medium">
+                      Ver
+                    </button>
                   </div>
                 </div>
               </div>

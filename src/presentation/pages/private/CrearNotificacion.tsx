@@ -1,135 +1,224 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { authHttp } from '../../../infrastructure/http/httpClients'
-import RequireRole from '../../components/RequireRole'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { authHttp } from "../../../infrastructure/http/httpClients";
+import RequireRole from "../../components/RequireRole";
+import { UserSearchDropdown, SuccessMessage } from "../../components/common";
+import type { Usuario } from "../../components/common";
 
 export default function CrearNotificacion() {
-  const nav = useNavigate()
-  const [usuarioId, setUsuarioId] = useState<string>('')
-  const [isGlobal, setIsGlobal] = useState<boolean>(false)
-  const [searchResults, setSearchResults] = useState<any[] | null>(null)
-  const [searching, setSearching] = useState(false)
-  const [titulo, setTitulo] = useState('')
-  const [mensaje, setMensaje] = useState('')
-  const [tipo, setTipo] = useState('mensaje_sistema')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const nav = useNavigate();
+  const [usuarioId, setUsuarioId] = useState<number | null>(null);
+  const [isGlobal, setIsGlobal] = useState<boolean>(true);
+  const [selectedUser, setSelectedUser] = useState<Usuario | null>(null);
+  const [titulo, setTitulo] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [tipo, setTipo] = useState("mensaje_sistema");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  const handleSelectUser = (user: Usuario) => {
+    setSelectedUser(user);
+    setUsuarioId(user.id);
+  };
+
+  const handleClearUser = () => {
+    setSelectedUser(null);
+    setUsuarioId(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
-    try {
-      // resolve usuario_id: if global, send null; if digits, use directly; if text, assume username and try to resolve
-      let targetId: number | null = null
-      if (!isGlobal && usuarioId) {
-        if (/^\d+$/.test(usuarioId.trim())) targetId = Number(usuarioId.trim())
-        else {
-          // try to resolve by username/search
-          try {
-            const res = await authHttp.get(`/users/?search=${encodeURIComponent(usuarioId.trim())}`)
-            const users = res.data?.results ?? res.data ?? []
-            if (Array.isArray(users) && users.length === 1) targetId = users[0].id
-            else if (Array.isArray(users) && users.length > 1) {
-              // pick first match by default (could be improved to force selection)
-              targetId = users[0].id
-            } else {
-              // not found
-              throw new Error('Usuario no encontrado')
-            }
-          } catch (e: any) {
-            throw e
-          }
-        }
-      }
+    e.preventDefault();
 
-      const payload = {
-        usuario_id: isGlobal ? null : targetId,
-        tipo,
-        titulo,
-        mensaje
-      }
-      await authHttp.post('/notificaciones/', payload)
-      nav('/app')
-    } catch (err: any) {
-      setError(err?.response?.data?.detail ?? 'Error al crear notificación')
-    } finally {
-      setLoading(false)
+    if (!titulo.trim() || !mensaje.trim()) {
+      setError("Por favor completa todos los campos");
+      return;
     }
+
+    if (!isGlobal && !usuarioId) {
+      setError("Selecciona un usuario o marca como global");
+      return;
+    }
+
+    setError(null);
+    setLoading(true);
+
+    try {
+      const payload = {
+        usuario_id: isGlobal ? null : usuarioId,
+        tipo,
+        titulo: titulo.trim(),
+        mensaje: mensaje.trim(),
+      };
+
+      await authHttp.post("/notificaciones/", payload);
+      setSuccess(true);
+      setTimeout(() => {
+        nav("/app/notificaciones");
+      }, 1500);
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.detail ??
+          err?.response?.data?.mensaje ??
+          "Error al crear notificación",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (success) {
+    return (
+      <RequireRole
+        roles={["admin"]}
+        fallback={<div className="p-6">No autorizado</div>}
+      >
+        <SuccessMessage
+          title="¡Notificación creada!"
+          message="Redirigiendo..."
+        />
+      </RequireRole>
+    );
   }
 
   return (
-    <RequireRole roles={["admin"]} fallback={<div>No autorizado</div>}>
-      <div className="p-6 max-w-xl">
-        <h1 className="text-2xl font-semibold mb-4">Crear notificación</h1>
-        {error && <div className="mb-3 text-red-600">{error}</div>}
-        <form onSubmit={handleSubmit} className="space-y-3">
+    <RequireRole
+      roles={["admin"]}
+      fallback={<div className="p-6">No autorizado</div>}
+    >
+      <div className="p-6 max-w-2xl mx-auto">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Crear Notificación
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Envía notificaciones a usuarios específicos o a todos
+          </p>
+        </div>
+
+        {error && (
+          <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 bg-white border rounded-lg p-6"
+        >
+          {/* Tipo de envío */}
           <div>
-            <label className="block text-sm font-medium">Enviar a todos (global)</label>
-            <label className="inline-flex items-center gap-2 mt-1">
-              <input type="checkbox" checked={isGlobal} onChange={e => setIsGlobal(e.target.checked)} />
-              <span className="text-sm">Enviar a todos</span>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tipo de envío
             </label>
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Usuario (id o username, opcional)</label>
-            <div className="flex gap-2 mt-1">
-              <input disabled={isGlobal} value={usuarioId} onChange={e => setUsuarioId(e.target.value)} placeholder="id o username" className="block w-full border rounded p-2" />
-              <button type="button" disabled={isGlobal || !usuarioId.trim()} onClick={async () => {
-                setSearching(true)
-                setSearchResults(null)
-                try {
-                  const res = await authHttp.get(`/users/?search=${encodeURIComponent(usuarioId.trim())}`)
-                  const users = res.data?.results ?? res.data ?? []
-                  setSearchResults(Array.isArray(users) ? users : [])
-                  if (Array.isArray(users) && users.length === 1) {
-                    setUsuarioId(String(users[0].id))
-                  }
-                } catch (e) {
-                  setSearchResults([])
-                } finally {
-                  setSearching(false)
-                }
-              }} className="px-3 py-2 bg-gray-100 border rounded">Buscar</button>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  checked={isGlobal}
+                  onChange={() => {
+                    setIsGlobal(true);
+                    setUsuarioId(null);
+                    setSelectedUser(null);
+                  }}
+                  className="w-4 h-4 text-[#f8b31d]"
+                />
+                <span className="text-sm">🌐 Global (todos los usuarios)</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  checked={!isGlobal}
+                  onChange={() => setIsGlobal(false)}
+                  className="w-4 h-4 text-[#f8b31d]"
+                />
+                <span className="text-sm">👤 Usuario específico</span>
+              </label>
             </div>
-            {searching && <div className="text-xs text-gray-500 mt-1">Buscando...</div>}
-            {searchResults && (
-              <div className="mt-2">
-                {searchResults.length === 0 && <div className="text-xs text-gray-500">No se encontraron usuarios.</div>}
-                {searchResults.length > 0 && (
-                  <ul className="border rounded p-2 max-h-40 overflow-auto">
-                    {searchResults.map((u: any) => (
-                      <li key={u.id} className="py-1 flex justify-between items-center">
-                        <div className="text-sm">{u.username ?? u.first_name ?? u.email} <span className="text-xs text-gray-400">(id: {u.id})</span></div>
-                        <button type="button" onClick={() => setUsuarioId(String(u.id))} className="text-xs text-blue-600">Seleccionar</button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )}
           </div>
+
+          {/* Búsqueda de usuario */}
+          {!isGlobal && (
+            <UserSearchDropdown
+              onSelectUser={handleSelectUser}
+              selectedUser={selectedUser}
+              onClearUser={handleClearUser}
+              disabled={isGlobal}
+            />
+          )}
+
+          {/* Tipo de notificación */}
           <div>
-            <label className="block text-sm font-medium">Título</label>
-            <input value={titulo} onChange={e => setTitulo(e.target.value)} className="mt-1 block w-full border rounded p-2" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Mensaje</label>
-            <textarea value={mensaje} onChange={e => setMensaje(e.target.value)} className="mt-1 block w-full border rounded p-2" rows={4} required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Tipo</label>
-            <select value={tipo} onChange={e => setTipo(e.target.value)} className="mt-1 block w-full border rounded p-2">
-              <option value="mensaje_sistema">mensaje_sistema</option>
-              <option value="aviso">aviso</option>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tipo *
+            </label>
+            <select
+              value={tipo}
+              onChange={(e) => setTipo(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+            >
+              <option value="mensaje_sistema">📢 Mensaje del Sistema</option>
+              <option value="aviso">ℹ️ Aviso</option>
+              <option value="recordatorio">⏰ Recordatorio</option>
+              <option value="urgente">⚠️ Urgente</option>
             </select>
           </div>
-          <div className="flex gap-3">
-            <button type="submit" disabled={loading} className="px-4 py-2 bg-emerald-600 text-white rounded">{loading ? 'Enviando...' : 'Crear'}</button>
-            <button type="button" onClick={() => nav('/app')} className="px-4 py-2 border rounded">Cancelar</button>
+
+          {/* Título */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Título *
+            </label>
+            <input
+              type="text"
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+              placeholder="Título de la notificación"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+              maxLength={200}
+            />
+            <div className="text-xs text-gray-500 mt-1">
+              {titulo.length}/200
+            </div>
+          </div>
+
+          {/* Mensaje */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Mensaje *
+            </label>
+            <textarea
+              value={mensaje}
+              onChange={(e) => setMensaje(e.target.value)}
+              placeholder="Contenido de la notificación..."
+              rows={6}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent resize-none"
+              maxLength={1000}
+            />
+            <div className="text-xs text-gray-500 mt-1">
+              {mensaje.length}/1000
+            </div>
+          </div>
+
+          {/* Botones */}
+          <div className="flex gap-3 pt-4">
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 bg-[#f8b31d] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#e0a419] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {loading ? "Enviando..." : "📤 Enviar Notificación"}
+            </button>
+            <button
+              type="button"
+              onClick={() => nav("/app/notificaciones")}
+              className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+            >
+              Cancelar
+            </button>
           </div>
         </form>
       </div>
     </RequireRole>
-  )
+  );
 }
