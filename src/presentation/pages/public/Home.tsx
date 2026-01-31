@@ -39,7 +39,7 @@ export default function Home() {
                 Comenzar ahora
               </a>
               <a
-                href="/courses"
+                href="/app/cursos"
                 className="inline-flex items-center justify-center border-2 border-white text-white px-6 py-3 rounded-lg font-oswald font-semibold hover:bg-white hover:text-slate-900 transition-colors"
               >
                 Ver cursos
