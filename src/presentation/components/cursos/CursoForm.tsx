@@ -100,11 +100,17 @@ export default function CursoForm({
               }))
             }
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
           >
-            <option value="">Selecciona un instructor</option>
+            <option value="" className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+              Selecciona un instructor
+            </option>
             {instructores.map((inst) => (
-              <option key={inst.id} value={inst.id}>
+              <option
+                key={inst.id}
+                value={inst.id}
+                className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+              >
                 {inst.first_name && inst.last_name
                   ? `${inst.first_name} ${inst.last_name}`
                   : inst.username}
@@ -129,7 +135,7 @@ export default function CursoForm({
           value={formData.titulo}
           onChange={handleChange}
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
         />
       </div>
 
@@ -148,7 +154,7 @@ export default function CursoForm({
           onChange={handleChange}
           required
           rows={5}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
         />
       </div>
 
@@ -167,11 +173,17 @@ export default function CursoForm({
             value={formData.categoria}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
           >
-            <option value="">Selecciona una categoría</option>
+            <option value="" className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+              Selecciona una categoría
+            </option>
             {CATEGORIAS.map((cat) => (
-              <option key={cat.value} value={cat.value}>
+              <option
+                key={cat.value}
+                value={cat.value}
+                className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+              >
                 {cat.label}
               </option>
             ))}
@@ -191,11 +203,17 @@ export default function CursoForm({
             value={formData.nivel}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
           >
-            <option value="">Selecciona un nivel</option>
+            <option value="" className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+              Selecciona un nivel
+            </option>
             {NIVELES.map((niv) => (
-              <option key={niv.value} value={niv.value}>
+              <option
+                key={niv.value}
+                value={niv.value}
+                className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+              >
                 {niv.label}
               </option>
             ))}
@@ -220,7 +238,7 @@ export default function CursoForm({
           required
           min="0"
           step="0.01"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
         />
       </div>
 
