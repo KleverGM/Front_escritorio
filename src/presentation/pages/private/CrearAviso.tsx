@@ -260,6 +260,7 @@ export default function CrearAviso() {
                   type="text"
                   id="titulo"
                   name="titulo"
+                  value={formData.titulo}
                   onChange={handleChange}
                   required
                   maxLength={200}
@@ -276,6 +277,7 @@ export default function CrearAviso() {
                   id="mensaje"
                   name="mensaje"
                   value={formData.mensaje}
+                  onChange={handleChange}
                   required
                   rows={6}
                   placeholder="Escribe el contenido del aviso..."
