@@ -1,9 +1,31 @@
+import { useEffect, useState } from "react";
 import { useAuth } from "../../../application/auth/useAuth";
 import { Link } from "react-router-dom";
 import { formatFullDate } from "../../utils/dateFormatter";
+import { usuarioService } from "../../../application/usuarios/usuario.service";
+import type { UsuarioEstadisticas } from "../../../domain/usuarios/usuario.types";
 
 export default function Profile() {
   const { user } = useAuth() as { user: any | null };
+  const [stats, setStats] = useState<UsuarioEstadisticas | null>(null);
+  const [statsError, setStatsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const data = await usuarioService.getEstadisticas();
+        setStats(data);
+      } catch (e: any) {
+        setStatsError(
+          e?.response?.data?.detail || "No se pudieron cargar estadísticas",
+        );
+      }
+    };
+
+    if (user) {
+      loadStats();
+    }
+  }, [user]);
 
   if (!user) {
     return (
@@ -36,6 +58,12 @@ export default function Profile() {
     if (role.includes("admin")) return "bg-red-100 text-red-800";
     if (role.includes("instructor")) return "bg-blue-100 text-blue-800";
     return "bg-green-100 text-green-800";
+  };
+
+  const formatTiempoEstudio = (seconds?: number) => {
+    if (!seconds) return "0 h";
+    const hours = Math.round(seconds / 3600);
+    return `${hours} h`;
   };
 
   return (
@@ -220,8 +248,98 @@ export default function Profile() {
           </div>
         </div>
 
+        {/* Estadísticas */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <svg
+              className="w-6 h-6 text-[#f8b31d]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 17v-2a4 4 0 014-4h2M9 17h6m-3 4a7 7 0 100-14 7 7 0 000 14z"
+              />
+            </svg>
+            Mis estadísticas
+          </h2>
+
+          {statsError && (
+            <p className="text-sm text-red-600 mb-4">{statsError}</p>
+          )}
+
+          {stats ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <p className="text-sm text-gray-600">Cursos inscritos</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {stats.total_cursos_inscritos}
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <p className="text-sm text-gray-600">Cursos completados</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {stats.cursos_completados}
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <p className="text-sm text-gray-600">Progreso promedio</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {Math.round(stats.progreso_promedio)}%
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <p className="text-sm text-gray-600">Tiempo estudiado</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {formatTiempoEstudio(stats.total_tiempo_estudiado)}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">Cargando estadísticas...</p>
+          )}
+
+          {stats?.cursos_recientes?.length ? (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Cursos recientes
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {stats.cursos_recientes.map((curso) => (
+                  <Link
+                    key={curso.id}
+                    to={`/app/cursos/${curso.id}`}
+                    className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
+                  >
+                    <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                      {curso.imagen ? (
+                        <img
+                          src={curso.imagen}
+                          alt={curso.titulo}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-gray-400">📘</span>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">
+                        {curso.titulo}
+                      </p>
+                      <p className="text-xs text-gray-500">Ver detalle</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </div>
+
         {/* Acciones rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             to="/app/cursos"
             className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-200 group"
@@ -299,6 +417,35 @@ export default function Profile() {
               <div>
                 <h3 className="font-semibold text-gray-900">Dashboard</h3>
                 <p className="text-sm text-gray-600">Ir al inicio</p>
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            to="/app/progreso-secciones"
+            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow duration-200 group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                <svg
+                  className="w-6 h-6 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h10"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">
+                  Progreso por sección
+                </h3>
+                <p className="text-sm text-gray-600">Ver detalle</p>
               </div>
             </div>
           </Link>

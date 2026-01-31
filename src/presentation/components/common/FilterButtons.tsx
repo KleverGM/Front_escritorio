@@ -18,7 +18,7 @@ export default function FilterButtons({
         className={`px-4 py-2 rounded-lg font-medium transition-colors ${
           filter === "todos"
             ? "bg-[#f8b31d] text-white"
-            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
         }`}
       >
         Todas
@@ -28,7 +28,7 @@ export default function FilterButtons({
         className={`px-4 py-2 rounded-lg font-medium transition-colors ${
           filter === "no_leidos"
             ? "bg-[#f8b31d] text-white"
-            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
         }`}
       >
         No leídas {unreadCount > 0 && `(${unreadCount})`}
@@ -38,7 +38,7 @@ export default function FilterButtons({
         className={`px-4 py-2 rounded-lg font-medium transition-colors ${
           filter === "leidos"
             ? "bg-[#f8b31d] text-white"
-            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
         }`}
       >
         Leídas

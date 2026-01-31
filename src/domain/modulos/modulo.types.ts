@@ -3,7 +3,8 @@ export interface Modulo {
   titulo: string;
   descripcion: string;
   orden: number;
-  curso_id: number;
+  curso_id?: number;
+  curso?: number;
   secciones?: Seccion[];
 }
 
@@ -15,7 +16,8 @@ export interface Seccion {
   video_file: string | null;
   archivo: string | null;
   orden: number;
-  modulo_id: number;
+  modulo_id?: number;
+  modulo?: number;
   duracion_minutos: number;
   es_preview: boolean;
 }
@@ -24,7 +26,7 @@ export interface ModuloFormData {
   titulo: string;
   descripcion: string;
   orden: number;
-  curso_id: number;
+  curso: number;
 }
 
 export interface SeccionFormData {
@@ -34,7 +36,7 @@ export interface SeccionFormData {
   video_file?: File | null;
   archivo?: File | null;
   orden: number;
-  modulo_id: number;
+  modulo: number;
   duracion_minutos: number;
   es_preview?: boolean;
 }

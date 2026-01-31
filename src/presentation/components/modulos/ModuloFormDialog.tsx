@@ -9,6 +9,7 @@ interface ModuloFormDialogProps {
   cursoId: number;
   initialData?: Partial<ModuloFormData>;
   title?: string;
+  totalModulos?: number;
 }
 
 export default function ModuloFormDialog({
@@ -18,13 +19,15 @@ export default function ModuloFormDialog({
   cursoId,
   initialData,
   title = "Crear Módulo",
+  totalModulos = 0,
 }: ModuloFormDialogProps) {
   const [loading, setLoading] = useState(false);
+  const siguienteOrden = initialData?.orden || totalModulos + 1;
   const [formData, setFormData] = useState<Partial<ModuloFormData>>({
     titulo: initialData?.titulo || "",
     descripcion: initialData?.descripcion || "",
-    orden: initialData?.orden || 1,
-    curso_id: cursoId,
+    orden: siguienteOrden,
+    curso: cursoId,
   });
 
   const handleChange = (
@@ -53,8 +56,8 @@ export default function ModuloFormDialog({
       setFormData({
         titulo: "",
         descripcion: "",
-        orden: 1,
-        curso_id: cursoId,
+        orden: totalModulos + 1,
+        curso: cursoId,
       });
     } catch (error) {
       console.error("Error al guardar módulo:", error);
@@ -82,8 +85,12 @@ export default function ModuloFormDialog({
             value={formData.titulo}
             onChange={handleChange}
             required
+            placeholder="Ej: Introducción a Python"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
           />
+          <p className="mt-1 text-xs text-gray-500">
+            Nombre descriptivo que los estudiantes verán
+          </p>
         </div>
 
         {/* Descripción */}
@@ -92,7 +99,7 @@ export default function ModuloFormDialog({
             htmlFor="descripcion"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
-            Descripción
+            Descripción <span className="text-gray-400">(opcional)</span>
           </label>
           <textarea
             id="descripcion"
@@ -100,8 +107,12 @@ export default function ModuloFormDialog({
             value={formData.descripcion}
             onChange={handleChange}
             rows={3}
+            placeholder="Ej: En este módulo aprenderás los conceptos básicos de Python, incluyendo variables, tipos de datos y operadores."
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
           />
+          <p className="mt-1 text-xs text-gray-500">
+            Breve explicación de lo que se verá en este módulo
+          </p>
         </div>
 
         {/* Orden */}
@@ -122,6 +133,11 @@ export default function ModuloFormDialog({
             min="1"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
           />
+          <p className="mt-1 text-xs text-gray-500">
+            {initialData?.orden
+              ? "Posición actual en el curso"
+              : `Este será el módulo #${siguienteOrden} del curso`}
+          </p>
         </div>
 
         {/* Botones */}

@@ -55,19 +55,21 @@ export default function Modal({
       {/* Modal */}
       <div className="flex items-center justify-center min-h-screen p-4">
         <div
-          className={`relative bg-white rounded-lg shadow-xl w-full ${sizeClasses[size]} transform transition-all`}
+          className={`relative bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full ${sizeClasses[size]} transform transition-all border border-gray-200 dark:border-gray-800`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           {(title || showCloseButton) && (
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
               {title && (
-                <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  {title}
+                </h3>
               )}
               {showCloseButton && (
                 <button
                   onClick={onClose}
-                  className="text-gray-400 hover:text-gray-500 transition-colors"
+                  className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-200 transition-colors"
                 >
                   <svg
                     className="w-6 h-6"
@@ -88,7 +90,7 @@ export default function Modal({
           )}
 
           {/* Content */}
-          <div className="p-6">{children}</div>
+          <div className="p-6 text-gray-900 dark:text-gray-100">{children}</div>
         </div>
       </div>
     </div>

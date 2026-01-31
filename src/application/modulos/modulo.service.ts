@@ -12,7 +12,7 @@ export const moduloService = {
    */
   getByCursoId: async (cursoId: number) => {
     const response = await authHttp.get<Modulo[]>(`/modulos/`, {
-      params: { curso_id: cursoId },
+      params: { curso: cursoId },
     });
     return response.data;
   },
@@ -48,16 +48,7 @@ export const moduloService = {
     await authHttp.delete(`/modulos/${id}/`);
   },
 
-  /**
-   * Reordenar módulos
-   */
-  reordenar: async (cursoId: number, orden: number[]) => {
-    const response = await authHttp.post(
-      `/cursos/${cursoId}/reordenar_modulos/`,
-      { orden },
-    );
-    return response.data;
-  },
+  // Nota: no hay endpoint de reordenamiento en el backend.
 };
 
 export const seccionService = {
@@ -66,7 +57,7 @@ export const seccionService = {
    */
   getByModuloId: async (moduloId: number) => {
     const response = await authHttp.get<Seccion[]>(`/secciones/`, {
-      params: { modulo_id: moduloId },
+      params: { modulo: moduloId },
     });
     return response.data;
   },
@@ -87,7 +78,7 @@ export const seccionService = {
     formData.append("titulo", data.titulo);
     formData.append("contenido", data.contenido);
     formData.append("orden", data.orden.toString());
-    formData.append("modulo_id", data.modulo_id.toString());
+    formData.append("modulo", data.modulo.toString());
     formData.append("duracion_minutos", data.duracion_minutos.toString());
 
     if (data.video_url) formData.append("video_url", data.video_url);
@@ -131,14 +122,5 @@ export const seccionService = {
     await authHttp.delete(`/secciones/${id}/`);
   },
 
-  /**
-   * Reordenar secciones
-   */
-  reordenar: async (moduloId: number, orden: number[]) => {
-    const response = await authHttp.post(
-      `/modulos/${moduloId}/reordenar_secciones/`,
-      { orden },
-    );
-    return response.data;
-  },
+  // Nota: no hay endpoint de reordenamiento en el backend.
 };

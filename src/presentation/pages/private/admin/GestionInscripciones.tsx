@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { authHttp } from "../../../../infrastructure/http/httpClients";
 import { inscripcionService } from "../../../../application/inscripciones/inscripcion.service";
+import { usuarioService } from "../../../../application/usuarios/usuario.service";
+import { cursoService } from "../../../../application/cursos/curso.service";
 import {
   LoadingSpinner,
   ErrorMessage,
@@ -42,6 +44,18 @@ export default function GestionInscripciones() {
     useState<Inscripcion | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [usuarios, setUsuarios] = useState<
+    Array<{ id: number; username: string; email: string }>
+  >([]);
+  const [cursos, setCursos] = useState<Array<{ id: number; titulo: string }>>(
+    [],
+  );
+  const [createData, setCreateData] = useState({
+    usuario_id: "",
+    curso_id: "",
+  });
 
   const filterCompletado = searchParams.get("completado") || "";
 
@@ -122,44 +136,102 @@ export default function GestionInscripciones() {
     }
   };
 
+  const loadUsuariosCursos = async () => {
+    try {
+      const [usuariosRes, cursosRes] = await Promise.all([
+        usuarioService.getAll({ perfil: "estudiante" }),
+        cursoService.getAll({ activo: true }),
+      ]);
+
+      const usuariosList = Array.isArray(usuariosRes?.results)
+        ? usuariosRes.results
+        : (usuariosRes as any);
+      const cursosList = Array.isArray(cursosRes?.results)
+        ? cursosRes.results
+        : (cursosRes as any);
+
+      setUsuarios(
+        (usuariosList || []).map((u: any) => ({
+          id: u.id,
+          username: u.username,
+          email: u.email,
+        })),
+      );
+      setCursos(
+        (cursosList || []).map((c: any) => ({ id: c.id, titulo: c.titulo })),
+      );
+    } catch (err: any) {
+      setError(err?.response?.data?.detail || "Error al cargar datos");
+    }
+  };
+
+  const handleCreateInscripcion = async () => {
+    if (!createData.usuario_id || !createData.curso_id) return;
+    try {
+      setCreating(true);
+      await inscripcionService.create({
+        usuario_id: Number(createData.usuario_id),
+        curso_id: Number(createData.curso_id),
+      });
+      setShowCreateModal(false);
+      setCreateData({ usuario_id: "", curso_id: "" });
+      await loadInscripciones();
+    } catch (err: any) {
+      setError(err?.response?.data?.detail || "Error al crear inscripción");
+    } finally {
+      setCreating(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 overflow-x-hidden">
       <div className="max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 Gestión de Inscripciones
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
                 Administra todas las inscripciones de los estudiantes
               </p>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 💡 Las inscripciones se crean cuando un estudiante se inscribe
                 en un curso
               </p>
             </div>
             <Link
               to="/app/admin"
-              className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             >
               ← Volver al Dashboard
             </Link>
+            <button
+              onClick={async () => {
+                setShowCreateModal(true);
+                if (usuarios.length === 0 || cursos.length === 0) {
+                  await loadUsuariosCursos();
+                }
+              }}
+              className="px-4 py-2 bg-[#f8b31d] text-white rounded-lg hover:bg-[#e0a219] transition-colors"
+            >
+              + Crear inscripción
+            </button>
           </div>
 
           {/* Filtros */}
-          <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-800">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Filtro por estado de completado */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                   Estado
                 </label>
                 <select
                   value={filterCompletado}
                   onChange={(e) => handleFilterCompletado(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 >
                   <option value="">Todas las inscripciones</option>
                   <option value="false">En progreso</option>
@@ -170,7 +242,7 @@ export default function GestionInscripciones() {
               <div className="flex items-end">
                 <button
                   onClick={loadInscripciones}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
                   🔄 Actualizar
                 </button>
@@ -393,6 +465,78 @@ export default function GestionInscripciones() {
                 </svg>
               )}
               {deleting ? "Eliminando..." : "Eliminar"}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        title="Crear inscripción"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Estudiante
+            </label>
+            <select
+              value={createData.usuario_id}
+              onChange={(e) =>
+                setCreateData((prev) => ({
+                  ...prev,
+                  usuario_id: e.target.value,
+                }))
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+            >
+              <option value="">Selecciona un estudiante</option>
+              {usuarios.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.username} ({u.email})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Curso
+            </label>
+            <select
+              value={createData.curso_id}
+              onChange={(e) =>
+                setCreateData((prev) => ({
+                  ...prev,
+                  curso_id: e.target.value,
+                }))
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+            >
+              <option value="">Selecciona un curso</option>
+              {cursos.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.titulo}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => setShowCreateModal(false)}
+              className="px-4 py-2 border border-gray-300 rounded-lg"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleCreateInscripcion}
+              disabled={
+                creating || !createData.usuario_id || !createData.curso_id
+              }
+              className="px-4 py-2 bg-[#f8b31d] text-white rounded-lg disabled:opacity-50"
+            >
+              {creating ? "Creando..." : "Crear"}
             </button>
           </div>
         </div>

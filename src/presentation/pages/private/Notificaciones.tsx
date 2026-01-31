@@ -39,6 +39,7 @@ export default function Notificaciones() {
     "todos",
   );
   const [selectedNotif, setSelectedNotif] = useState<Notificacion | null>(null);
+  const [noleidasCount, setNoleidasCount] = useState(0);
 
   const isAdmin = user?.rol === "admin";
 
@@ -46,14 +47,19 @@ export default function Notificaciones() {
     setLoading(true);
     setError(null);
     let url = "/notificaciones/";
-    if (filtro === "leidos") url += "?leida=true";
-    else if (filtro === "no_leidos") url += "?leida=false";
+    if (filtro === "no_leidos") url = "/notificaciones/no_leidas/";
 
     authHttp
       .get(url)
       .then((res) => {
         const data = res.data?.results ?? res.data ?? [];
-        setNotificaciones(Array.isArray(data) ? data : []);
+        const list = Array.isArray(data) ? data : [];
+        if (filtro === "leidos") {
+          setNotificaciones(list.filter((n) => n.leida));
+        } else {
+          setNotificaciones(list);
+        }
+        setNoleidasCount(list.filter((n) => !n.leida).length);
       })
       .catch((e) => {
         setError(e?.response?.data?.detail ?? "Error al cargar notificaciones");
@@ -67,7 +73,7 @@ export default function Notificaciones() {
 
   const markAsRead = async (id: number) => {
     try {
-      await authHttp.patch(`/notificaciones/${id}/`, { leida: true });
+      await authHttp.post(`/notificaciones/${id}/marcar_leida/`);
 
       // Actualizar localmente
       setNotificaciones((prev) =>
@@ -77,6 +83,7 @@ export default function Notificaciones() {
             : n,
         ),
       );
+      setNoleidasCount((prev) => Math.max(0, prev - 1));
 
       // Si estamos en el filtro "no_leidos", remover de la lista
       if (filtro === "no_leidos") {
@@ -93,11 +100,14 @@ export default function Notificaciones() {
   };
 
   const deleteNotificacion = async (id: number) => {
-    if (!isAdmin) return;
     if (!confirmAction("¿Eliminar esta notificación?")) return;
     try {
       await authHttp.delete(`/notificaciones/${id}/`);
       setNotificaciones((prev) => prev.filter((n) => n.id !== id));
+      const deleted = notificaciones.find((n) => n.id === id);
+      if (deleted && !deleted.leida) {
+        setNoleidasCount((prev) => Math.max(0, prev - 1));
+      }
       if (selectedNotif?.id === id) setSelectedNotif(null);
     } catch (e: any) {
       alert(
@@ -107,14 +117,16 @@ export default function Notificaciones() {
     }
   };
 
-  const noleidas = notificaciones.filter((n) => !n.leida).length;
+  const noleidas = noleidasCount;
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Notificaciones</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Notificaciones
+          </h1>
+          <p className="text-gray-600 dark:text-slate-400 mt-1">
             {noleidas > 0
               ? `${noleidas} sin leer`
               : "No hay notificaciones sin leer"}
@@ -122,7 +134,7 @@ export default function Notificaciones() {
         </div>
         <RequireRole roles={["admin"]} fallback={null}>
           <Link
-            to="/app/notificaciones/create"
+            to="/app/notificaciones/crear"
             className="px-4 py-2 bg-[#f8b31d] text-white rounded-lg hover:bg-[#e0a419] transition-colors font-medium"
           >
             + Nueva Notificación
@@ -161,8 +173,10 @@ export default function Notificaciones() {
               {notificaciones.map((notif) => (
                 <div
                   key={notif.id}
-                  className={`border rounded-lg p-4 transition-all hover:shadow-md cursor-pointer ${
-                    !notif.leida ? "bg-blue-50 border-blue-200" : "bg-white"
+                  className={`border rounded-xl p-4 transition-all hover:shadow-md cursor-pointer ${
+                    !notif.leida
+                      ? "bg-blue-50 border-blue-200 dark:bg-slate-800 dark:border-slate-700"
+                      : "bg-white dark:bg-slate-900 dark:border-slate-800"
                   }`}
                   onClick={() => {
                     setSelectedNotif(notif);
@@ -176,18 +190,18 @@ export default function Notificaciones() {
                         {!notif.leida && (
                           <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
                         )}
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 dark:text-slate-400">
                           {formatRelativeDate(notif.fecha_creacion)}
                         </span>
                       </div>
-                      <h3 className="font-semibold text-gray-900 mb-1">
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
                         {notif.titulo}
                       </h3>
-                      <p className="text-sm text-gray-600 line-clamp-2">
+                      <p className="text-sm text-gray-600 dark:text-slate-300 line-clamp-2">
                         {notif.mensaje}
                       </p>
                       {notif.usuario_id === null && (
-                        <span className="inline-block mt-2 text-xs text-gray-500 italic">
+                        <span className="inline-block mt-2 text-xs text-gray-500 dark:text-slate-400 italic">
                           🌐 Global
                         </span>
                       )}
@@ -204,17 +218,15 @@ export default function Notificaciones() {
                           Marcar leída
                         </button>
                       )}
-                      {isAdmin && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteNotificacion(notif.id);
-                          }}
-                          className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-                        >
-                          Eliminar
-                        </button>
-                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteNotificacion(notif.id);
+                        }}
+                        className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                      >
+                        Eliminar
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -231,7 +243,7 @@ export default function Notificaciones() {
           onClick={() => setSelectedNotif(null)}
         >
           <div
-            className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+            className="bg-white dark:bg-slate-900 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto border border-gray-200 dark:border-slate-800"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
@@ -239,25 +251,27 @@ export default function Notificaciones() {
                 <div className="flex items-center gap-2">
                   <TipoBadge tipo={selectedNotif.tipo} showIcon={false} />
                   {selectedNotif.usuario_id === null && (
-                    <span className="text-xs text-gray-500">🌐 Global</span>
+                    <span className="text-xs text-gray-500 dark:text-slate-400">
+                      🌐 Global
+                    </span>
                   )}
                 </div>
                 <button
                   onClick={() => setSelectedNotif(null)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 text-2xl leading-none"
                 >
                   ×
                 </button>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                 {selectedNotif.titulo}
               </h2>
               <div className="prose max-w-none mb-4">
-                <p className="text-gray-700 whitespace-pre-wrap">
+                <p className="text-gray-700 dark:text-slate-300 whitespace-pre-wrap">
                   {selectedNotif.mensaje}
                 </p>
               </div>
-              <div className="border-t pt-4 text-sm text-gray-600">
+              <div className="border-t border-gray-200 dark:border-slate-800 pt-4 text-sm text-gray-600 dark:text-slate-400">
                 <p>
                   📅 Creada:{" "}
                   {new Date(selectedNotif.fecha_creacion).toLocaleString()}

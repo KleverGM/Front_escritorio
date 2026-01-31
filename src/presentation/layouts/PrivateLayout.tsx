@@ -5,19 +5,16 @@ import Header from "../components/Header";
 
 export default function PrivateLayout({ onLogout }: { onLogout: () => void }) {
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-[320px_1fr] bg-gray-50 text-slate-900 overflow-x-hidden">
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-[320px_1fr] bg-gray-50 text-slate-900 overflow-x-hidden dark:bg-slate-900 dark:text-slate-100">
       <Sidebar onLogout={onLogout} />
 
       <div className="flex flex-col overflow-x-hidden">
-        <header className="border-b border-gray-200 bg-white px-6 py-4">
-          <div className="max-w-6xl mx-auto relative flex items-center justify-between">
-            <div />
-
-            <div className="absolute left-1/2 transform -translate-x-1/2">
+        <header className="border-b border-gray-200 bg-white px-6 py-4 dark:bg-slate-900 dark:border-slate-700">
+          <div className="max-w-6xl mx-auto w-full grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto] md:items-center">
+            <div className="flex justify-center md:justify-center">
               <SearchControl />
             </div>
-
-            <div>
+            <div className="flex justify-end">
               <Header onLogout={onLogout} />
             </div>
           </div>
@@ -50,7 +47,10 @@ function SearchControl() {
   }
 
   return (
-    <form onSubmit={submitSearch} className="flex items-center">
+    <form
+      onSubmit={submitSearch}
+      className="flex items-center justify-center gap-2 flex-wrap md:flex-nowrap w-full"
+    >
       <label htmlFor="header-search" className="sr-only">
         Buscar cursos
       </label>
@@ -60,7 +60,7 @@ function SearchControl() {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Buscar cursos..."
-        className="border border-gray-200 rounded px-3 py-1 w-72 md:w-96"
+        className="border border-gray-200 rounded px-3 py-1 w-full max-w-md md:w-96 bg-white text-slate-900 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700"
       />
       <button
         type="submit"
@@ -71,7 +71,7 @@ function SearchControl() {
       <button
         type="button"
         onClick={() => setQ("")}
-        className="ml-2 text-sm text-slate-600"
+        className="text-sm text-slate-600 dark:text-slate-300"
       >
         Cancelar
       </button>

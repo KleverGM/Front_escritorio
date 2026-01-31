@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { authHttp } from "../../../../infrastructure/http/httpClients";
+import { resenaService } from "../../../../application/resenas/resena.service";
 import { LoadingSpinner, ErrorMessage } from "../../../components/common";
 import ResenaFilters from "../../../components/admin/ResenaFilters";
 import ResenaStats from "../../../components/admin/ResenaStats";
@@ -37,6 +38,8 @@ export default function GestionResenas() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
+  const [replyingId, setReplyingId] = useState<string | null>(null);
 
   // Estados de filtros
   const [searchQuery, setSearchQuery] = useState("");
@@ -100,6 +103,25 @@ export default function GestionResenas() {
     }
   };
 
+  const handleReply = async (resenaId: string) => {
+    const texto = (replyDrafts[resenaId] || "").trim();
+    if (!texto) return;
+    try {
+      setReplyingId(resenaId);
+      await resenaService.responder(resenaId, texto);
+      setReplyDrafts((prev) => ({ ...prev, [resenaId]: "" }));
+      await loadResenas();
+    } catch (err: any) {
+      const mensaje =
+        err?.response?.data?.detail ||
+        err?.response?.data?.error ||
+        "No se pudo responder la reseña";
+      setError(mensaje);
+    } finally {
+      setReplyingId(null);
+    }
+  };
+
   // Filtrado local
   const filteredResenas = resenas.filter((resena) => {
     // Filtro de búsqueda
@@ -160,36 +182,36 @@ export default function GestionResenas() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <Link
             to="/app/admin"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
+            className="inline-flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mb-4"
           >
             ← Volver al Panel de Admin
           </Link>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 Moderación de Reseñas
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
                 Gestiona y modera las reseñas de todos los cursos
               </p>
             </div>
             <button
               onClick={loadResenas}
               disabled={loading || deleting}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
             >
               <svg
                 className={`w-5 h-5 ${loading || deleting ? "animate-spin" : ""}`}
@@ -234,7 +256,7 @@ export default function GestionResenas() {
 
         {/* Lista de reseñas */}
         {filteredResenas.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-12 text-center">
             <svg
               className="w-16 h-16 text-gray-400 mx-auto mb-4"
               fill="none"
@@ -267,6 +289,34 @@ export default function GestionResenas() {
                 key={resena.id}
                 resena={resena}
                 onDelete={handleDelete}
+                footer={
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">
+                      Responder
+                    </label>
+                    <textarea
+                      value={replyDrafts[resena.id] || ""}
+                      onChange={(e) =>
+                        setReplyDrafts((prev) => ({
+                          ...prev,
+                          [resena.id]: e.target.value,
+                        }))
+                      }
+                      rows={3}
+                      className="mt-2 w-full border border-gray-300 rounded-lg p-2 text-sm"
+                      placeholder="Escribe una respuesta para el estudiante..."
+                    />
+                    <div className="mt-2 flex justify-end">
+                      <button
+                        onClick={() => handleReply(resena.id)}
+                        disabled={replyingId === resena.id}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm disabled:opacity-50"
+                      >
+                        {replyingId === resena.id ? "Enviando..." : "Responder"}
+                      </button>
+                    </div>
+                  </div>
+                }
               />
             ))}
           </div>

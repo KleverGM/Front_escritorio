@@ -20,8 +20,8 @@ export default function ResenaFilters({
   cursos,
 }: ResenaFiltersProps) {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6 mb-6">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
         Filtros de Búsqueda
       </h3>
 
@@ -33,7 +33,7 @@ export default function ResenaFilters({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Buscar por comentario, usuario o curso..."
-            className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+            className="w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
           />
           <svg
             className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
@@ -74,7 +74,7 @@ export default function ResenaFilters({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Filtro de calificación */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Calificación
           </label>
           <div className="flex gap-2 flex-wrap">
@@ -83,7 +83,7 @@ export default function ResenaFilters({
               className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                 ratingFilter === null
                   ? "bg-[#f8b31d] text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
               Todas
@@ -95,7 +95,7 @@ export default function ResenaFilters({
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                   ratingFilter === rating
                     ? "bg-[#f8b31d] text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
                 }`}
               >
                 {rating} ⭐
@@ -106,13 +106,13 @@ export default function ResenaFilters({
 
         {/* Filtro de curso */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
             Curso
           </label>
           <select
             value={cursoFilter}
             onChange={(e) => onCursoFilterChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
           >
             <option value="">Todos los cursos</option>
             {cursos.map((curso) => (

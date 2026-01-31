@@ -56,7 +56,9 @@ export const avisoService = {
    * Marcar aviso como leído
    */
   marcarComoLeido: async (id: number) => {
-    const response = await authHttp.post<Aviso>(`/avisos/${id}/marcar_leido/`);
+    const response = await authHttp.patch<Aviso>(`/avisos/${id}/`, {
+      leido: true,
+    });
     return response.data;
   },
 
@@ -64,8 +66,17 @@ export const avisoService = {
    * Marcar todos los avisos como leídos
    */
   marcarTodosLeidos: async () => {
-    const response = await authHttp.post("/avisos/marcar_todos_leidos/");
-    return response.data;
+    const res = await authHttp.get<{ count: number; results: Aviso[] }>(
+      "/avisos/",
+      { params: { leido: false, page_size: 1000 } },
+    );
+    const items = res.data?.results ?? [];
+    await Promise.all(
+      items.map((aviso) =>
+        authHttp.patch(`/avisos/${aviso.id}/`, { leido: true }),
+      ),
+    );
+    return { total: items.length };
   },
 
   /**

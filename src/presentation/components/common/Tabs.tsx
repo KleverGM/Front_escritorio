@@ -21,7 +21,9 @@ export default function Tabs({
   className = "",
 }: TabsProps) {
   return (
-    <div className={`border-b border-gray-200 ${className}`}>
+    <div
+      className={`border-b border-gray-200 dark:border-gray-800 ${className}`}
+    >
       <nav className="-mb-px flex space-x-8" aria-label="Tabs">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -35,7 +37,7 @@ export default function Tabs({
                 ${
                   isActive
                     ? "border-[#f8b31d] text-[#f8b31d]"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                    : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-700"
                 }
               `}
             >
@@ -48,7 +50,7 @@ export default function Tabs({
                   ${
                     isActive
                       ? "bg-[#f8b31d] bg-opacity-10 text-[#f8b31d]"
-                      : "bg-gray-100 text-gray-900"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   }
                 `}
                 >

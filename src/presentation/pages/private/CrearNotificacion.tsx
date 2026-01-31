@@ -86,29 +86,29 @@ export default function CrearNotificacion() {
       roles={["admin"]}
       fallback={<div className="p-6">No autorizado</div>}
     >
-      <div className="p-6 max-w-2xl mx-auto">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 max-w-2xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             Crear Notificación
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 dark:text-gray-300 mt-1">
             Envía notificaciones a usuarios específicos o a todos
           </p>
         </div>
 
         {error && (
-          <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          <div className="mb-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-200 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-6 bg-white border rounded-lg p-6"
+          className="space-y-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6"
         >
           {/* Tipo de envío */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Tipo de envío
             </label>
             <div className="flex gap-4">
@@ -123,7 +123,9 @@ export default function CrearNotificacion() {
                   }}
                   className="w-4 h-4 text-[#f8b31d]"
                 />
-                <span className="text-sm">🌐 Global (todos los usuarios)</span>
+                <span className="text-sm text-gray-700 dark:text-gray-200">
+                  🌐 Global (todos los usuarios)
+                </span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -132,7 +134,9 @@ export default function CrearNotificacion() {
                   onChange={() => setIsGlobal(false)}
                   className="w-4 h-4 text-[#f8b31d]"
                 />
-                <span className="text-sm">👤 Usuario específico</span>
+                <span className="text-sm text-gray-700 dark:text-gray-200">
+                  👤 Usuario específico
+                </span>
               </label>
             </div>
           </div>
@@ -149,13 +153,13 @@ export default function CrearNotificacion() {
 
           {/* Tipo de notificación */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Tipo *
             </label>
             <select
               value={tipo}
               onChange={(e) => setTipo(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+              className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
             >
               <option value="mensaje_sistema">📢 Mensaje del Sistema</option>
               <option value="aviso">ℹ️ Aviso</option>
@@ -166,7 +170,7 @@ export default function CrearNotificacion() {
 
           {/* Título */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Título *
             </label>
             <input
@@ -174,17 +178,17 @@ export default function CrearNotificacion() {
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
               placeholder="Título de la notificación"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+              className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
               maxLength={200}
             />
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {titulo.length}/200
             </div>
           </div>
 
           {/* Mensaje */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Mensaje *
             </label>
             <textarea
@@ -192,10 +196,10 @@ export default function CrearNotificacion() {
               onChange={(e) => setMensaje(e.target.value)}
               placeholder="Contenido de la notificación..."
               rows={6}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent resize-none"
+              className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent resize-none"
               maxLength={1000}
             />
-            <div className="text-xs text-gray-500 mt-1">
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {mensaje.length}/1000
             </div>
           </div>
@@ -212,7 +216,7 @@ export default function CrearNotificacion() {
             <button
               type="button"
               onClick={() => nav("/app/notificaciones")}
-              className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+              className="px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-200"
             >
               Cancelar
             </button>

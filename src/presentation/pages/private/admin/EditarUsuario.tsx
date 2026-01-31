@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { authHttp } from "../../../../infrastructure/http/httpClients";
+import { usuarioService } from "../../../../application/usuarios/usuario.service";
 import {
   LoadingSpinner,
   ErrorMessage,
@@ -34,6 +35,11 @@ export default function EditarUsuario() {
     email: "",
     perfil: "",
     is_active: true,
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    new_password: "",
+    confirm_password: "",
   });
 
   useEffect(() => {
@@ -75,6 +81,23 @@ export default function EditarUsuario() {
 
     try {
       await authHttp.patch(`/users/${id}/`, formData);
+
+      if (passwordData.new_password) {
+        if (passwordData.new_password.length < 8) {
+          setError("La nueva contraseña debe tener al menos 8 caracteres");
+          setSaving(false);
+          return;
+        }
+        if (passwordData.new_password !== passwordData.confirm_password) {
+          setError("Las contraseñas no coinciden");
+          setSaving(false);
+          return;
+        }
+        await usuarioService.cambiarPassword(Number(id), {
+          new_password: passwordData.new_password,
+        });
+      }
+
       setSuccess(true);
       setTimeout(() => {
         navigate("/app/admin/usuarios");
@@ -100,9 +123,17 @@ export default function EditarUsuario() {
     }));
   };
 
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPasswordData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center overflow-x-hidden">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center overflow-x-hidden">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -110,7 +141,7 @@ export default function EditarUsuario() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center overflow-x-hidden">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center overflow-x-hidden">
         <SuccessMessage
           title="Usuario actualizado"
           message="Redirigiendo a la lista de usuarios..."
@@ -120,22 +151,22 @@ export default function EditarUsuario() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 overflow-x-hidden">
       <div className="max-w-3xl mx-auto w-full">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 Editar Usuario
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
                 Modifica la información del usuario
               </p>
             </div>
             <Link
               to="/app/admin/usuarios"
-              className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             >
               ← Volver
             </Link>
@@ -150,7 +181,7 @@ export default function EditarUsuario() {
 
         {/* Información del usuario */}
         {usuario && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6 mb-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#f8b31d] to-[#f59e0b] flex items-center justify-center">
                 <span className="text-xl font-bold text-white">
@@ -162,10 +193,10 @@ export default function EditarUsuario() {
                 </span>
               </div>
               <div>
-                <div className="text-lg font-semibold text-gray-900">
+                <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   @{usuario.username}
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-500 dark:text-gray-400">
                   Usuario desde{" "}
                   {new Date(usuario.fecha_creacion).toLocaleDateString(
                     "es-ES",
@@ -178,7 +209,7 @@ export default function EditarUsuario() {
                 </div>
               </div>
             </div>
-            <div className="text-sm text-gray-600 bg-yellow-50 border border-yellow-200 rounded p-3">
+            <div className="text-sm text-gray-600 dark:text-gray-200 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded p-3">
               <strong>Nota:</strong> El nombre de usuario (@{usuario.username})
               no se puede modificar.
             </div>
@@ -188,12 +219,12 @@ export default function EditarUsuario() {
         {/* Formulario */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+          className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6"
         >
           <div className="space-y-6">
             {/* Nombre */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 Nombre <span className="text-red-500">*</span>
               </label>
               <input
@@ -202,14 +233,14 @@ export default function EditarUsuario() {
                 value={formData.first_name}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 placeholder="Ingresa el nombre"
               />
             </div>
 
             {/* Apellido */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 Apellido <span className="text-red-500">*</span>
               </label>
               <input
@@ -218,7 +249,7 @@ export default function EditarUsuario() {
                 value={formData.last_name}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 placeholder="Ingresa el apellido"
               />
             </div>
@@ -300,6 +331,44 @@ export default function EditarUsuario() {
             </div>
           </div>
         </form>
+
+        {/* Cambiar contraseña */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Cambiar contraseña
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nueva contraseña
+              </label>
+              <input
+                type="password"
+                name="new_password"
+                value={passwordData.new_password}
+                onChange={handlePasswordChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                placeholder="Mínimo 8 caracteres"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Confirmar contraseña
+              </label>
+              <input
+                type="password"
+                name="confirm_password"
+                value={passwordData.confirm_password}
+                onChange={handlePasswordChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                placeholder="Repite la contraseña"
+              />
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            Si dejas estos campos vacíos, la contraseña no se modificará.
+          </p>
+        </div>
       </div>
     </div>
   );

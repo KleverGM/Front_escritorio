@@ -93,7 +93,7 @@ export default function DetalleCursoAdmin() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -101,11 +101,11 @@ export default function DetalleCursoAdmin() {
 
   if (error || !curso) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
         <ErrorMessage message={error || "Curso no encontrado"} />
         <button
           onClick={() => navigate("/app/admin/cursos")}
-          className="mt-4 text-blue-600 hover:text-blue-800"
+          className="mt-4 text-blue-600 dark:text-blue-400 hover:text-blue-800"
         >
           ← Volver a Gestión de Cursos
         </button>
@@ -114,19 +114,19 @@ export default function DetalleCursoAdmin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <button
             onClick={() => navigate("/app/admin/cursos")}
-            className="text-blue-600 hover:text-blue-800 mb-2"
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 mb-2"
           >
             ← Volver a Gestión de Cursos
           </button>
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 {curso.titulo}
               </h1>
               <div className="flex items-center gap-3 mt-2">
@@ -139,10 +139,10 @@ export default function DetalleCursoAdmin() {
                 >
                   {curso.activo ? "Activo" : "Inactivo"}
                 </span>
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
                   {curso.categoria}
                 </span>
-                <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium">
                   {curso.nivel}
                 </span>
               </div>
@@ -218,41 +218,43 @@ export default function DetalleCursoAdmin() {
                     )}
                     <div className="space-y-4">
                       <div>
-                        <label className="text-sm font-semibold text-gray-700">
+                        <label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                           Descripción
                         </label>
-                        <p className="text-gray-600 mt-1">
+                        <p className="text-gray-600 dark:text-gray-300 mt-1">
                           {curso.descripcion}
                         </p>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="text-sm font-semibold text-gray-700">
+                          <label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                             Categoría
                           </label>
-                          <p className="text-gray-900 mt-1">
+                          <p className="text-gray-900 dark:text-gray-100 mt-1">
                             {curso.categoria}
                           </p>
                         </div>
                         <div>
-                          <label className="text-sm font-semibold text-gray-700">
+                          <label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                             Nivel
                           </label>
-                          <p className="text-gray-900 mt-1">{curso.nivel}</p>
+                          <p className="text-gray-900 dark:text-gray-100 mt-1">
+                            {curso.nivel}
+                          </p>
                         </div>
                         <div>
-                          <label className="text-sm font-semibold text-gray-700">
+                          <label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                             Precio
                           </label>
-                          <p className="text-gray-900 mt-1">
+                          <p className="text-gray-900 dark:text-gray-100 mt-1">
                             ${parseFloat(curso.precio).toFixed(2)}
                           </p>
                         </div>
                         <div>
-                          <label className="text-sm font-semibold text-gray-700">
+                          <label className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                             Fecha de creación
                           </label>
-                          <p className="text-gray-900 mt-1">
+                          <p className="text-gray-900 dark:text-gray-100 mt-1">
                             {new Date(
                               curso.fecha_creacion,
                             ).toLocaleDateString()}

@@ -24,6 +24,8 @@ interface CursoEditFormProps {
   onInstructorChange: (instructorId: number | null) => void;
   onSubmit: (e: React.FormEvent) => void;
   saving: boolean;
+  userRole?: string;
+  backPath?: string;
 }
 
 export default function CursoEditForm({
@@ -33,53 +35,58 @@ export default function CursoEditForm({
   onInstructorChange,
   onSubmit,
   saving,
+  userRole = "admin",
+  backPath = "/app/admin/cursos",
 }: CursoEditFormProps) {
+  const isInstructor = userRole === "instructor";
   return (
     <form
       onSubmit={onSubmit}
-      className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+      className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6"
     >
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
         Detalles del Curso
       </h2>
 
       <div className="space-y-4">
-        {/* Instructor */}
-        <div>
-          <label
-            htmlFor="instructor_id"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Instructor *
-          </label>
-          <select
-            id="instructor_id"
-            name="instructor_id"
-            value={formData.instructor_id || ""}
-            onChange={(e) =>
-              onInstructorChange(
-                e.target.value ? parseInt(e.target.value) : null,
-              )
-            }
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
-          >
-            <option value="">Selecciona un instructor</option>
-            {instructores.map((instructor) => (
-              <option key={instructor.id} value={instructor.id}>
-                {instructor.first_name && instructor.last_name
-                  ? `${instructor.first_name} ${instructor.last_name}`
-                  : instructor.username}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Instructor - Solo visible para administradores */}
+        {!isInstructor && (
+          <div>
+            <label
+              htmlFor="instructor_id"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+            >
+              Instructor *
+            </label>
+            <select
+              id="instructor_id"
+              name="instructor_id"
+              value={formData.instructor_id || ""}
+              onChange={(e) =>
+                onInstructorChange(
+                  e.target.value ? parseInt(e.target.value) : null,
+                )
+              }
+              required
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+            >
+              <option value="">Selecciona un instructor</option>
+              {instructores.map((instructor) => (
+                <option key={instructor.id} value={instructor.id}>
+                  {instructor.first_name && instructor.last_name
+                    ? `${instructor.first_name} ${instructor.last_name}`
+                    : instructor.username}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* Título */}
         <div>
           <label
             htmlFor="titulo"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
           >
             Título del curso *
           </label>
@@ -90,7 +97,7 @@ export default function CursoEditForm({
             value={formData.titulo}
             onChange={onChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
           />
         </div>
 
@@ -98,7 +105,7 @@ export default function CursoEditForm({
         <div>
           <label
             htmlFor="descripcion"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
           >
             Descripción *
           </label>
@@ -109,7 +116,7 @@ export default function CursoEditForm({
             onChange={onChange}
             required
             rows={5}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
           />
         </div>
 
@@ -118,7 +125,7 @@ export default function CursoEditForm({
           <div>
             <label
               htmlFor="categoria"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
             >
               Categoría *
             </label>
@@ -128,7 +135,7 @@ export default function CursoEditForm({
               value={formData.categoria}
               onChange={onChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
             >
               <option value="">Selecciona una categoría</option>
               <option value="programacion">Programación</option>
@@ -145,7 +152,7 @@ export default function CursoEditForm({
           <div>
             <label
               htmlFor="nivel"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
             >
               Nivel *
             </label>
@@ -155,7 +162,7 @@ export default function CursoEditForm({
               value={formData.nivel}
               onChange={onChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
             >
               <option value="">Selecciona un nivel</option>
               <option value="principiante">Principiante</option>
@@ -169,7 +176,7 @@ export default function CursoEditForm({
         <div>
           <label
             htmlFor="precio"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
           >
             Precio *
           </label>
@@ -182,7 +189,7 @@ export default function CursoEditForm({
             required
             min="0"
             step="0.01"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
           />
         </div>
       </div>
@@ -197,8 +204,8 @@ export default function CursoEditForm({
           {saving ? "Guardando..." : "Guardar Cambios"}
         </button>
         <Link
-          to="/app/admin/cursos"
-          className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+          to={backPath}
+          className="px-6 py-2 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors font-medium"
         >
           Cancelar
         </Link>

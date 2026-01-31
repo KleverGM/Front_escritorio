@@ -37,7 +37,7 @@ export default function EstadisticasCurso() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -45,13 +45,13 @@ export default function EstadisticasCurso() {
 
   if (error || !stats) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
         <ErrorMessage
           message={error || "No se pudieron cargar las estadísticas"}
         />
         <Link
           to="/app/admin/cursos"
-          className="mt-4 inline-block text-blue-600 hover:underline"
+          className="mt-4 inline-block text-blue-600 dark:text-blue-400 hover:underline"
         >
           ← Volver a cursos
         </Link>
@@ -60,17 +60,17 @@ export default function EstadisticasCurso() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <Link
             to={`/app/admin/cursos/${cursoId}`}
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
+            className="inline-flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mb-4"
           >
             ← Volver al Curso
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             Estadísticas del Curso
           </h1>
         </div>
@@ -78,8 +78,10 @@ export default function EstadisticasCurso() {
         {/* Tarjetas de estadísticas */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           <Card>
-            <p className="text-sm text-gray-600 mb-1">Total Estudiantes</p>
-            <p className="text-3xl font-bold text-gray-900">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+              Total Estudiantes
+            </p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               {stats.total_estudiantes}
             </p>
             <p className="text-xs text-green-600 mt-1">
@@ -88,22 +90,28 @@ export default function EstadisticasCurso() {
           </Card>
 
           <Card>
-            <p className="text-sm text-gray-600 mb-1">Inscripciones</p>
-            <p className="text-3xl font-bold text-gray-900">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+              Inscripciones
+            </p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               {stats.total_inscripciones}
             </p>
           </Card>
 
           <Card>
-            <p className="text-sm text-gray-600 mb-1">Tasa de Completado</p>
-            <p className="text-3xl font-bold text-gray-900">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+              Tasa de Completado
+            </p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               {stats.tasa_completado.toFixed(1)}%
             </p>
           </Card>
 
           <Card>
-            <p className="text-sm text-gray-600 mb-1">Progreso Promedio</p>
-            <p className="text-3xl font-bold text-gray-900">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+              Progreso Promedio
+            </p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               {stats.progreso_promedio.toFixed(1)}%
             </p>
           </Card>
@@ -115,7 +123,7 @@ export default function EstadisticasCurso() {
             <CardTitle>Calificación</CardTitle>
             <CardContent>
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-5xl font-bold text-gray-900">
+                <span className="text-5xl font-bold text-gray-900 dark:text-gray-100">
                   {stats.rating_promedio.toFixed(1)}
                 </span>
                 <div>
@@ -134,7 +142,7 @@ export default function EstadisticasCurso() {
                       </svg>
                     ))}
                   </div>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                     {stats.total_resenas} reseñas
                   </p>
                 </div>
@@ -148,7 +156,7 @@ export default function EstadisticasCurso() {
               <p className="text-4xl font-bold text-green-600">
                 ${stats.ingresos_total.toLocaleString()}
               </p>
-              <p className="text-sm text-gray-600 mt-2">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
                 Total de ingresos generados
               </p>
             </CardContent>
@@ -162,36 +170,36 @@ export default function EstadisticasCurso() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Link
                 to={`/app/admin/cursos/${cursoId}/modulos`}
-                className="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
               >
-                <h3 className="font-semibold text-blue-900 mb-1">
+                <h3 className="font-semibold text-blue-900 dark:text-blue-200 mb-1">
                   Gestionar Módulos
                 </h3>
-                <p className="text-sm text-blue-700">
+                <p className="text-sm text-blue-700 dark:text-blue-300">
                   Administrar contenido del curso
                 </p>
               </Link>
 
               <Link
                 to={`/app/admin/cursos/${cursoId}`}
-                className="p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+                className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors"
               >
-                <h3 className="font-semibold text-green-900 mb-1">
+                <h3 className="font-semibold text-green-900 dark:text-green-200 mb-1">
                   Editar Curso
                 </h3>
-                <p className="text-sm text-green-700">
+                <p className="text-sm text-green-700 dark:text-green-300">
                   Modificar información básica
                 </p>
               </Link>
 
               <Link
                 to={`/app/admin/inscripciones?curso_id=${cursoId}`}
-                className="p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+                className="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors"
               >
-                <h3 className="font-semibold text-purple-900 mb-1">
+                <h3 className="font-semibold text-purple-900 dark:text-purple-200 mb-1">
                   Ver Inscripciones
                 </h3>
-                <p className="text-sm text-purple-700">
+                <p className="text-sm text-purple-700 dark:text-purple-300">
                   Lista de estudiantes inscritos
                 </p>
               </Link>

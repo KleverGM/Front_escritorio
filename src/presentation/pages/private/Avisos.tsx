@@ -100,14 +100,16 @@ export default function Avisos() {
   const unreadCount = avisos.filter((a) => !a.leido).length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Avisos</h1>
-              <p className="text-gray-600 mt-1">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Avisos
+              </h1>
+              <p className="text-gray-600 dark:text-slate-400 mt-1">
                 {unreadCount > 0 ? (
                   <span className="text-[#f8b31d] font-medium">
                     {unreadCount} sin leer
@@ -122,10 +124,10 @@ export default function Avisos() {
               <button
                 onClick={() => loadAvisos(true)}
                 disabled={refreshing}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 disabled:opacity-50"
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 disabled:opacity-50 dark:bg-slate-900 dark:border-slate-700 dark:hover:bg-slate-800"
               >
                 <svg
-                  className={`w-5 h-5 text-gray-600 ${refreshing ? "animate-spin" : ""}`}
+                  className={`w-5 h-5 text-gray-600 dark:text-slate-300 ${refreshing ? "animate-spin" : ""}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -142,7 +144,7 @@ export default function Avisos() {
 
               <RequireRole roles={["admin", "instructor"]} fallback={null}>
                 <Link
-                  to="/app/avisos/create"
+                  to="/app/avisos/crear"
                   className="px-4 py-2 bg-[#f8b31d] hover:bg-[#f59e0b] text-black font-medium rounded-lg transition-colors flex items-center gap-2"
                 >
                   <svg
@@ -197,9 +199,9 @@ export default function Avisos() {
               <div
                 key={aviso.id}
                 onClick={() => handleAvisoClick(aviso)}
-                className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer border-l-4 ${
+                className={`bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer border-l-4 ${
                   !aviso.leido
-                    ? "border-[#f8b31d] bg-yellow-50"
+                    ? "border-[#f8b31d] bg-yellow-50 dark:bg-slate-800"
                     : "border-transparent"
                 }`}
               >
@@ -214,15 +216,15 @@ export default function Avisos() {
                         )}
                       </div>
 
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                         {aviso.titulo}
                       </h3>
 
-                      <p className="text-gray-700 line-clamp-2">
+                      <p className="text-gray-700 dark:text-slate-300 line-clamp-2">
                         {aviso.mensaje}
                       </p>
 
-                      <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                      <div className="flex items-center gap-4 mt-3 text-sm text-gray-500 dark:text-slate-400">
                         <span className="flex items-center gap-1">
                           <svg
                             className="w-4 h-4"
@@ -251,7 +253,7 @@ export default function Avisos() {
                           e.stopPropagation();
                           deleteAviso(aviso.id);
                         }}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                         title="Eliminar aviso"
                       >
                         <svg

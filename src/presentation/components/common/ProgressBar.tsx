@@ -34,14 +34,16 @@ export default function ProgressBar({
     <div className={`w-full ${className}`}>
       {showPercentage && (
         <div className="flex justify-between items-center mb-1">
-          <span className="text-sm font-medium text-gray-700">Progreso</span>
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+            Progreso
+          </span>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
             {percentage.toFixed(0)}%
           </span>
         </div>
       )}
       <div
-        className={`w-full bg-gray-200 rounded-full ${heightClasses[height]} overflow-hidden`}
+        className={`w-full bg-gray-200 dark:bg-gray-800 rounded-full ${heightClasses[height]} overflow-hidden`}
       >
         <div
           className={`${colorClasses[color]} ${heightClasses[height]} rounded-full transition-all duration-300`}

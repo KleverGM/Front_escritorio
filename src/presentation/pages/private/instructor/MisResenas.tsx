@@ -1,22 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { authHttp } from "../../../../infrastructure/http/httpClients";
-import { LoadingSpinner, ErrorMessage, EmptyState } from "../../../components/common";
+import { resenaService } from "../../../../application/resenas/resena.service";
+import {
+  LoadingSpinner,
+  ErrorMessage,
+  EmptyState,
+} from "../../../components/common";
 
 interface Resena {
   id: number;
-  usuario: {
+  usuario?: {
     id: number;
     username: string;
     first_name: string;
     last_name: string;
   } | null;
-  curso: {
+  curso?: {
     id: number;
     titulo: string;
   } | null;
-  calificacion: number;
+  rating?: number;
+  calificacion?: number;
+  nombre_usuario?: string;
+  titulo_curso?: string;
   comentario: string;
   fecha_creacion: string;
+  respuestas?: Array<{
+    usuario_id: number;
+    texto: string;
+    fecha: string;
+  }>;
 }
 
 export default function MisResenas() {
@@ -24,6 +37,8 @@ export default function MisResenas() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("todas");
+  const [replyDrafts, setReplyDrafts] = useState<Record<number, string>>({});
+  const [replyingId, setReplyingId] = useState<number | null>(null);
 
   useEffect(() => {
     loadResenas();
@@ -45,65 +60,106 @@ export default function MisResenas() {
     }
   };
 
+  const handleReply = async (resenaId: number) => {
+    const texto = (replyDrafts[resenaId] || "").trim();
+    if (!texto) return;
+    try {
+      setReplyingId(resenaId);
+      await resenaService.responder(String(resenaId), texto);
+      setReplyDrafts((prev) => ({ ...prev, [resenaId]: "" }));
+      await loadResenas();
+    } catch (e: any) {
+      setError(e?.response?.data?.detail || "No se pudo responder la reseña");
+    } finally {
+      setReplyingId(null);
+    }
+  };
+
   const filteredResenas = resenas.filter((r) => {
+    const rating = r.rating ?? r.calificacion ?? 0;
     if (filter === "todas") return true;
-    if (filter === "5") return r.calificacion === 5;
-    if (filter === "4") return r.calificacion === 4;
-    if (filter === "3") return r.calificacion === 3;
-    if (filter === "baja") return r.calificacion <= 2;
+    if (filter === "5") return rating === 5;
+    if (filter === "4") return rating === 4;
+    if (filter === "3") return rating === 3;
+    if (filter === "baja") return rating <= 2;
     return true;
   });
 
   const promedioCalificacion =
     resenas.length > 0
-      ? resenas.reduce((acc, r) => acc + r.calificacion, 0) / resenas.length
+      ? resenas.reduce((acc, r) => acc + (r.rating ?? r.calificacion ?? 0), 0) /
+        resenas.length
       : 0;
 
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Mis Reseñas</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          Mis Reseñas
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300 mt-1">
           Opiniones de estudiantes sobre tus cursos
         </p>
       </div>
 
       {/* Estadísticas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-lg shadow">
-          <p className="text-sm text-gray-600">Total de reseñas</p>
-          <p className="text-2xl font-bold mt-1">{resenas.length}</p>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 rounded-lg shadow">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            Total de reseñas
+          </p>
+          <p className="text-2xl font-bold mt-1 text-gray-900 dark:text-gray-100">
+            {resenas.length}
+          </p>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <p className="text-sm text-gray-600">Calificación promedio</p>
-          <p className="text-2xl font-bold mt-1 flex items-center gap-2">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 rounded-lg shadow">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            Calificación promedio
+          </p>
+          <p className="text-2xl font-bold mt-1 flex items-center gap-2 text-gray-900 dark:text-gray-100">
             {promedioCalificacion.toFixed(1)}
-            <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-5 h-5 text-yellow-500"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
           </p>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <p className="text-sm text-gray-600">5 estrellas</p>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 rounded-lg shadow">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            5 estrellas
+          </p>
           <p className="text-2xl font-bold mt-1 text-green-600">
-            {resenas.filter((r) => r.calificacion === 5).length}
+            {
+              resenas.filter((r) => (r.rating ?? r.calificacion ?? 0) === 5)
+                .length
+            }
           </p>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow">
-          <p className="text-sm text-gray-600">Necesitan atención</p>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 rounded-lg shadow">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            Necesitan atención
+          </p>
           <p className="text-2xl font-bold mt-1 text-red-600">
-            {resenas.filter((r) => r.calificacion <= 2).length}
+            {
+              resenas.filter((r) => (r.rating ?? r.calificacion ?? 0) <= 2)
+                .length
+            }
           </p>
         </div>
       </div>
 
       {/* Filtros */}
-      <div className="bg-white p-4 rounded-lg shadow mb-6">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 rounded-lg shadow mb-6">
         <div className="flex items-center gap-4">
-          <span className="text-sm font-medium">Filtrar por:</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+            Filtrar por:
+          </span>
           <button
             onClick={() => setFilter("todas")}
             className={`px-3 py-1 rounded text-sm ${
@@ -189,17 +245,26 @@ export default function MisResenas() {
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="font-semibold text-lg">
-                    {resena.usuario?.first_name} {resena.usuario?.last_name}
+                    {resena.nombre_usuario ||
+                      `${resena.usuario?.first_name ?? ""} ${resena.usuario?.last_name ?? ""}`.trim() ||
+                      resena.usuario?.username ||
+                      "Usuario"}
                   </h3>
                   <p className="text-sm text-gray-600">
-                    Curso: {resena.curso?.titulo || "Sin título"}
+                    Curso:{" "}
+                    {resena.titulo_curso ||
+                      resena.curso?.titulo ||
+                      "Sin título"}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {new Date(resena.fecha_creacion).toLocaleDateString("es-ES", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {new Date(resena.fecha_creacion).toLocaleDateString(
+                      "es-ES",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      },
+                    )}
                   </p>
                 </div>
                 <div className="flex items-center gap-1">
@@ -207,7 +272,7 @@ export default function MisResenas() {
                     <svg
                       key={star}
                       className={`w-5 h-5 ${
-                        star <= resena.calificacion
+                        star <= (resena.rating ?? resena.calificacion ?? 0)
                           ? "text-yellow-500"
                           : "text-gray-300"
                       }`}
@@ -220,6 +285,63 @@ export default function MisResenas() {
                 </div>
               </div>
               <p className="text-gray-700">{resena.comentario}</p>
+
+              {resena.respuestas && resena.respuestas.length > 0 && (
+                <div className="mt-4 border-t border-gray-200 pt-4">
+                  <p className="text-sm font-medium text-gray-700 mb-2">
+                    Respuestas del instructor
+                  </p>
+                  <div className="space-y-2">
+                    {resena.respuestas.map((respuesta, idx) => (
+                      <div
+                        key={`${resena.id}-${idx}`}
+                        className="bg-gray-50 border border-gray-200 rounded-lg p-3"
+                      >
+                        <p className="text-sm text-gray-700">
+                          {respuesta.texto}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {new Date(respuesta.fecha).toLocaleDateString(
+                            "es-ES",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            },
+                          )}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-4">
+                <label className="text-sm font-medium text-gray-700">
+                  Responder
+                </label>
+                <textarea
+                  value={replyDrafts[resena.id] || ""}
+                  onChange={(e) =>
+                    setReplyDrafts((prev) => ({
+                      ...prev,
+                      [resena.id]: e.target.value,
+                    }))
+                  }
+                  rows={3}
+                  className="mt-2 w-full border border-gray-300 rounded-lg p-2 text-sm"
+                  placeholder="Escribe una respuesta para el estudiante..."
+                />
+                <div className="mt-2 flex justify-end">
+                  <button
+                    onClick={() => handleReply(resena.id)}
+                    disabled={replyingId === resena.id}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm disabled:opacity-50"
+                  >
+                    {replyingId === resena.id ? "Enviando..." : "Responder"}
+                  </button>
+                </div>
+              </div>
             </div>
           ))}
         </div>

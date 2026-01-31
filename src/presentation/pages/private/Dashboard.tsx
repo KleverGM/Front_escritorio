@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, Navigate } from "react-router-dom";
-import RequireRole from "../../components/RequireRole";
+import { useLocation, Navigate } from "react-router-dom";
 import { publicHttp, authHttp } from "../../../infrastructure/http/httpClients";
 import { useAuth } from "../../../application/auth/useAuth";
-import { EmptyState } from "../../components/common";
+import {
+  DashboardWelcome,
+  DashboardGreeting,
+  CoursesKpi,
+  MyCoursesPanel,
+  NotificationsPanel,
+  DashboardActions,
+} from "../../components/dashboard";
+import { LoadingSpinner } from "../../components/common";
 
 const Dashboard: React.FC = () => {
   const [totalCourses, setTotalCourses] = useState<number | null>(null);
@@ -136,113 +143,83 @@ const Dashboard: React.FC = () => {
     };
   }, [isAuthenticated, user]);
 
-  // Redirigir admins al Panel de Admin (después de todos los hooks)
-  if (user?.perfil === "admin" || user?.perfil === "administrador") {
+  // Obtener el rol del usuario
+  const payload = decodeLocalTokenPayload();
+  const userRole =
+    user?.tipo_usuario ||
+    user?.perfil ||
+    user?.role ||
+    user?.type ||
+    payload?.tipo_usuario ||
+    payload?.perfil ||
+    payload?.role ||
+    payload?.type;
+
+  if (isAuthenticated && !userRole) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  // Redirigir instructores y admins a sus paneles específicos
+  if (userRole === "admin" || userRole === "administrador") {
     return <Navigate to="/app/admin" replace />;
   }
 
+  if (userRole === "instructor") {
+    return <Navigate to="/app/instructor" replace />;
+  }
+
+  // El resto del código es para estudiantes
   return (
     <div className="p-6">
-      {welcome && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="mb-4 rounded-md border border-emerald-700/60 bg-emerald-900/5 px-3 py-2 text-emerald-700 text-sm"
-        >
-          {welcome}
-        </div>
-      )}
+      <DashboardWelcome message={welcome} />
 
       {(() => {
         const nameFromHook = user
           ? user.first_name || user.username || user.email || null
           : null;
         const name = nameFromHook ?? decodeLocalTokenName();
-        if (!name) return null;
-        return (
-          <div className="text-lg font-medium text-slate-800 mb-2">
-            Hola, {name}!!
-            <div className="text-xs text-gray-500">
-              Rol:{" "}
-              {String(user?.tipo_usuario ?? user?.role ?? user?.type ?? "—")}
-            </div>
-          </div>
-        );
+        return <DashboardGreeting name={name} />;
       })()}
 
       {/* debug panel removed */}
 
-      <h1 className="text-2xl font-semibold mb-2">Resumen</h1>
-      {/* admin controls removed */}
-      <p className="text-sm text-gray-600 mb-6">
-        Descubre novedades y sigue avanzando en tu aprendizaje.
-      </p>
+      <div className="mb-6">
+        <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">
+          Resumen
+        </h1>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+          {userRole === "instructor"
+            ? "Gestiona tus cursos y revisa el progreso de tus estudiantes."
+            : userRole === "admin" || userRole === "administrador"
+              ? "Administra el sistema y revisa estadísticas globales."
+              : "Descubre novedades y sigue avanzando en tu aprendizaje."}
+        </p>
+      </div>
 
-      {/* KPI: show number of enrolled courses (0 if none) */}
-      <div className="grid grid-cols-1 sm:grid-cols-1 gap-4 mb-6">
-        <div className="bg-white shadow rounded p-4">
-          <div className="text-xs text-gray-500">Mis cursos en progreso</div>
-          <div className="text-2xl font-bold">
-            {Array.isArray(myCourses) ? myCourses.length : 0}
-          </div>
-        </div>
+      {/* KPI: show number of courses */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+        <CoursesKpi
+          label={
+            userRole === "instructor" ? "Mis cursos" : "Mis cursos en progreso"
+          }
+          count={Array.isArray(myCourses) ? myCourses.length : 0}
+        />
+        <CoursesKpi label="Total de cursos" count={totalCourses ?? 0} />
+        <CoursesKpi label="Notificaciones" count={notifications.length} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Mis cursos: render list and link */}
-        <div className="lg:col-span-2 bg-white shadow rounded p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-medium">Mis cursos</h2>
-            <Link to="/app/cursos" className="text-sm text-blue-600">
-              Ver todos
-            </Link>
-          </div>
-          {Array.isArray(myCourses) && myCourses.length > 0 ? (
-            <ul className="space-y-2">
-              {myCourses.map((c, i) => (
-                <li key={i} className="text-sm text-gray-700">
-                  {c.titulo ?? c.title ?? c.nombre ?? `Curso ${i + 1}`}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <EmptyState
-              icon="📚"
-              title="Sin cursos"
-              description="Aún no estás inscrito en cursos"
-            />
-          )}
-        </div>
+        <MyCoursesPanel courses={myCourses} userRole={userRole} />
 
         {/* Notificaciones: render only when there is data */}
-        {Array.isArray(notifications) && notifications.length > 0 && (
-          <div className="bg-white shadow rounded p-4">
-            <h2 className="font-medium mb-3">Notificaciones recientes</h2>
-            <ul className="text-sm text-gray-600 space-y-2">
-              {notifications.map((n, idx) => (
-                <li key={idx} className="border-b pb-2">
-                  {n.message ?? n.titulo ?? "Notificación"}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <NotificationsPanel notifications={notifications} />
       </div>
 
-      <div className="mt-6 flex gap-3">
-        <RequireRole roles={["admin", "instructor"]} fallback={null}>
-          <Link
-            to="/app/cursos/create"
-            className="px-4 py-2 bg-blue-600 text-white rounded"
-          >
-            Crear curso
-          </Link>
-        </RequireRole>
-
-        <Link to="/app/cursos" className="px-4 py-2 border rounded">
-          Explorar cursos
-        </Link>
-      </div>
+      <DashboardActions />
 
       {/* debug inscripciones removed */}
 

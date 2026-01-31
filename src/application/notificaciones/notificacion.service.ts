@@ -72,7 +72,7 @@ export const notificacionService = {
    */
   getNoLeidas: async () => {
     const response = await authHttp.get<Notificacion[]>("/notificaciones/", {
-      params: { leido: false },
+      params: { leida: false },
     });
     return response.data;
   },
@@ -81,9 +81,9 @@ export const notificacionService = {
    * Contar notificaciones no leídas
    */
   contarNoLeidas: async () => {
-    const response = await authHttp.get<{ count: number }>(
-      "/notificaciones/no_leidas/count/",
+    const response = await authHttp.get<{ no_leidas: number }>(
+      "/notificaciones/contador/",
     );
-    return response.data.count;
+    return response.data.no_leidas;
   },
 };

@@ -11,6 +11,10 @@ import RequireAuth from "./presentation/routing/RequireAuth";
 import Home from "./presentation/pages/public/Home";
 import Login from "./presentation/pages/public/Login";
 import Register from "./presentation/pages/public/Register";
+import Acerca from "./presentation/pages/public/Acerca";
+import Precios from "./presentation/pages/public/Precios";
+import Contacto from "./presentation/pages/public/Contacto";
+import Faq from "./presentation/pages/public/Faq";
 
 // Páginas privadas generales
 import Dashboard from "./presentation/pages/private/Dashboard";
@@ -24,7 +28,11 @@ import CursosHome from "./presentation/pages/private/CursosHome";
 import CrearCursosLayouts from "./presentation/layouts/CrearCursosLayouts";
 import CatalogoCursos from "./presentation/pages/private/CatalogoCursos";
 import DetalleCurso from "./presentation/pages/private/DetalleCurso";
+import CursoContenido from "./presentation/pages/private/CursoContenido";
+import CursoResenas from "./presentation/pages/private/CursoResenas";
 import MisCursos from "./presentation/pages/private/MisCursos";
+import ProgresoSecciones from "./presentation/pages/private/ProgresoSecciones";
+import MisCompras from "./presentation/pages/private/MisCompras";
 
 // Páginas de admin
 import AdminDashboard from "./presentation/pages/private/AdminDashboard";
@@ -52,6 +60,7 @@ import {
   GestionMisCursos,
   MisResenas,
   MisEstudiantes,
+  EstadisticasCurso as EstadisticasCursoInstructor,
 } from "./presentation/pages/private/instructor";
 
 export default function App() {
@@ -62,6 +71,10 @@ export default function App() {
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/acerca" element={<Acerca />} />
+          <Route path="/precios" element={<Precios />} />
+          <Route path="/contacto" element={<Contacto />} />
+          <Route path="/faq" element={<Faq />} />
         </Route>
 
         <Route element={<AuthLayout />}>
@@ -130,11 +143,28 @@ export default function App() {
             <Route path="analytics" element={<AnalyticsDashboard />} />
           </Route>
 
+          {/* Rutas de instructor */}
+          <Route path="instructor">
+            <Route index element={<InstructorDashboard />} />
+            <Route path="cursos" element={<GestionMisCursos />} />
+            <Route path="cursos/crear" element={<CrearCurso />} />
+            <Route path="cursos/:id/editar" element={<EditarCurso />} />
+            <Route path="cursos/:id/modulos" element={<GestionModulos />} />
+            <Route
+              path="cursos/:id/estadisticas"
+              element={<EstadisticasCursoInstructor />}
+            />
+            <Route path="estudiantes" element={<MisEstudiantes />} />
+            <Route path="resenas" element={<MisResenas />} />
+          </Route>
+
           {/* Rutas de cursos */}
           <Route path="cursos">
             <Route index element={<CatalogoCursos />} />
             <Route path="mis-cursos" element={<MisCursos />} />
             <Route path=":id" element={<DetalleCurso />} />
+            <Route path=":id/contenido" element={<CursoContenido />} />
+            <Route path=":id/resenas" element={<CursoResenas />} />
           </Route>
 
           {/* Ruta legacy de cursos home */}
@@ -167,6 +197,12 @@ export default function App() {
             <Route index element={<Profile />} />
             <Route path="edit" element={<EditProfile />} />
           </Route>
+
+          {/* Progreso por sección */}
+          <Route path="progreso-secciones" element={<ProgresoSecciones />} />
+
+          {/* Mis compras */}
+          <Route path="purchases" element={<MisCompras />} />
         </Route>
       </Routes>
     </BrowserRouter>

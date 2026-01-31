@@ -114,10 +114,12 @@ export const cursoService = {
    * Obtener cursos en los que estoy inscrito (estudiante)
    */
   getCursosInscritos: async () => {
-    const response = await authHttp.get<Curso[]>(
-      "/inscripciones/mis_inscripciones/",
-    );
-    return response.data;
+    const response = await authHttp.get<{ results?: any[] }>("/inscripciones/");
+    const inscripciones = (response.data as any)?.results ?? response.data;
+    const cursos = Array.isArray(inscripciones)
+      ? inscripciones.map((i: any) => i.curso).filter(Boolean)
+      : [];
+    return cursos as Curso[];
   },
 
   /**

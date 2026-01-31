@@ -17,6 +17,7 @@ interface UserSearchDropdownProps {
   disabled?: boolean;
   placeholder?: string;
   label?: string;
+  allowedUserIds?: number[];
 }
 
 export default function UserSearchDropdown({
@@ -26,6 +27,7 @@ export default function UserSearchDropdown({
   disabled = false,
   placeholder = "Buscar por nombre, apellido o username...",
   label,
+  allowedUserIds,
 }: UserSearchDropdownProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<Usuario[]>([]);
@@ -53,7 +55,11 @@ export default function UserSearchDropdown({
         `/users/?search=${encodeURIComponent(term)}`,
       );
       const users = res.data?.results ?? res.data ?? [];
-      setSearchResults(Array.isArray(users) ? users : []);
+      const list = Array.isArray(users) ? users : [];
+      const filtered = Array.isArray(allowedUserIds)
+        ? list.filter((u) => allowedUserIds.includes(u.id))
+        : list;
+      setSearchResults(filtered);
       setShowDropdown(true);
     } catch (e) {
       console.error("Error buscando usuarios:", e);
@@ -78,7 +84,7 @@ export default function UserSearchDropdown({
 
   return (
     <div className="relative">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
         {label || "Buscar usuario *"}
       </label>
       <input
@@ -87,7 +93,7 @@ export default function UserSearchDropdown({
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent disabled:bg-gray-100"
+        className="w-full border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-800"
       />
       {searching && (
         <div className="absolute right-3 top-10 text-gray-400">
@@ -97,21 +103,23 @@ export default function UserSearchDropdown({
 
       {/* Dropdown de resultados */}
       {showDropdown && searchResults.length > 0 && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
           {searchResults.map((user) => (
             <div
               key={user.id}
               onClick={() => selectUser(user)}
-              className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+              className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer border-b border-gray-200 dark:border-gray-800 last:border-b-0"
             >
               <div className="w-10 h-10 rounded-full bg-[#f8b31d] flex items-center justify-center text-white font-semibold">
                 {getUserInitials(user)}
               </div>
               <div>
-                <div className="font-medium text-gray-900">
+                <div className="font-medium text-gray-900 dark:text-gray-100">
                   {user.first_name} {user.last_name}
                 </div>
-                <div className="text-sm text-gray-500">@{user.username}</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  @{user.username}
+                </div>
               </div>
             </div>
           ))}
@@ -120,15 +128,15 @@ export default function UserSearchDropdown({
 
       {/* Usuario seleccionado */}
       {selectedUser && (
-        <div className="mt-2 flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+        <div className="mt-2 flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg">
           <div className="w-10 h-10 rounded-full bg-[#f8b31d] flex items-center justify-center text-white font-semibold">
             {getUserInitials(selectedUser)}
           </div>
           <div className="flex-1">
-            <div className="font-medium text-gray-900">
+            <div className="font-medium text-gray-900 dark:text-gray-100">
               {selectedUser.first_name} {selectedUser.last_name}
             </div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-500 dark:text-gray-400">
               @{selectedUser.username}
             </div>
           </div>

@@ -26,33 +26,33 @@ export default function EstudiantesTable({
   inscripciones,
 }: EstudiantesTableProps) {
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+          <thead className="bg-gray-50 dark:bg-gray-900">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Estudiante
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Curso
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Fecha inscripción
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Progreso
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Estado
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
             {inscripciones.map((inscripcion) => (
               <tr
                 key={inscripcion.id}
-                className="hover:bg-gray-50 transition-colors"
+                className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
@@ -65,23 +65,23 @@ export default function EstudiantesTable({
                       </div>
                     </div>
                     <div className="ml-4">
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-gray-900 dark:text-gray-100">
                         {inscripcion.usuario?.first_name}{" "}
                         {inscripcion.usuario?.last_name}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
                         {inscripcion.usuario?.email}
                       </div>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="text-sm font-medium text-gray-900 max-w-xs truncate">
+                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100 max-w-xs truncate">
                     {inscripcion.curso?.titulo || "Sin título"}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">
+                  <div className="text-sm text-gray-900 dark:text-gray-100">
                     {new Date(inscripcion.fecha_inscripcion).toLocaleDateString(
                       "es-ES",
                       {
@@ -94,7 +94,7 @@ export default function EstudiantesTable({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-2">
-                    <div className="w-28 bg-gray-200 rounded-full h-2.5">
+                    <div className="w-28 bg-gray-200 dark:bg-gray-800 rounded-full h-2.5">
                       <div
                         className={`h-2.5 rounded-full transition-all ${
                           inscripcion.progreso === 0
@@ -106,14 +106,14 @@ export default function EstudiantesTable({
                         style={{ width: `${inscripcion.progreso || 0}%` }}
                       />
                     </div>
-                    <span className="text-sm font-medium text-gray-700 min-w-[3rem] text-right">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200 min-w-[3rem] text-right">
                       {inscripcion.progreso || 0}%
                     </span>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {inscripcion.completado ? (
-                    <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200">
                       <svg
                         className="w-3 h-3"
                         fill="currentColor"
@@ -128,7 +128,7 @@ export default function EstudiantesTable({
                       Completado
                     </span>
                   ) : inscripcion.progreso > 0 ? (
-                    <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200">
                       <svg
                         className="w-3 h-3"
                         fill="currentColor"
@@ -143,7 +143,7 @@ export default function EstudiantesTable({
                       En progreso
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                    <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
                       <svg
                         className="w-3 h-3"
                         fill="currentColor"

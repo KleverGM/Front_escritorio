@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authHttp } from "../../../infrastructure/http/httpClients";
 import { useAuth } from "../../../application/auth/useAuth";
@@ -21,10 +21,44 @@ export default function CrearAviso() {
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<Usuario | null>(null);
   const [success, setSuccess] = useState(false);
+  const [allowedUserIds, setAllowedUserIds] = useState<number[] | null>(null);
+  const [loadingStudents, setLoadingStudents] = useState(false);
 
   const isAdmin =
     user?.perfil?.toLowerCase() === "administrador" ||
     user?.perfil?.toLowerCase() === "admin";
+  const isInstructor = user?.perfil?.toLowerCase() === "instructor";
+
+  useEffect(() => {
+    if (!isInstructor) return;
+    let mounted = true;
+    const loadStudents = async () => {
+      setLoadingStudents(true);
+      try {
+        const res = await authHttp.get("/inscripciones/");
+        const data = res.data?.results ?? res.data ?? [];
+        const ids = Array.isArray(data)
+          ? Array.from(
+              new Set(
+                data
+                  .map((i: any) => i.usuario?.id ?? i.usuario)
+                  .filter((v: any) => Number.isFinite(v)),
+              ),
+            )
+          : [];
+        if (mounted) setAllowedUserIds(ids);
+      } catch {
+        if (mounted) setAllowedUserIds([]);
+      } finally {
+        if (mounted) setLoadingStudents(false);
+      }
+    };
+
+    loadStudents();
+    return () => {
+      mounted = false;
+    };
+  }, [isInstructor]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -56,11 +90,17 @@ export default function CrearAviso() {
       const payload: any = {
         titulo: formData.titulo.trim(),
         mensaje: formData.mensaje.trim(),
+        descripcion: formData.mensaje.trim(),
         tipo: formData.tipo,
       };
 
       if (formData.usuario_id) {
-        payload.usuario_id = parseInt(formData.usuario_id);
+        const parsedId = parseInt(formData.usuario_id, 10);
+        if (!Number.isFinite(parsedId)) {
+          setError("Usuario destinatario inválido");
+          return;
+        }
+        payload.usuario_id = parsedId;
       }
 
       await authHttp.post("/avisos/", payload);
@@ -74,7 +114,7 @@ export default function CrearAviso() {
           Array.isArray(firstError) ? firstError[0] : String(firstError),
         );
       } else {
-        setError(errorData?.detail || "Error al crear aviso");
+        setError(errorData?.detail || err?.message || "Error al crear aviso");
       }
     } finally {
       setLoading(false);
@@ -90,13 +130,13 @@ export default function CrearAviso() {
         </div>
       }
     >
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8">
         <div className="max-w-3xl mx-auto px-4">
           {/* Header */}
           <div className="mb-8">
             <button
               onClick={() => navigate("/app/avisos")}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mb-4"
             >
               <svg
                 className="w-5 h-5"
@@ -113,16 +153,18 @@ export default function CrearAviso() {
               </svg>
               Volver a avisos
             </button>
-            <h1 className="text-3xl font-bold text-gray-900">Crear Aviso</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Crear Aviso
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">
               Envía un aviso a un usuario específico
             </p>
           </div>
 
           {/* Información de ayuda */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 flex items-start gap-3">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6 flex items-start gap-3">
             <svg
-              className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5"
+              className="w-6 h-6 text-blue-600 dark:text-blue-300 flex-shrink-0 mt-0.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -135,10 +177,10 @@ export default function CrearAviso() {
               />
             </svg>
             <div className="flex-1">
-              <p className="text-sm text-blue-900 font-medium">
+              <p className="text-sm text-blue-900 dark:text-blue-100 font-medium">
                 Información importante
               </p>
-              <p className="text-sm text-blue-800 mt-1">
+              <p className="text-sm text-blue-800 dark:text-blue-200 mt-1">
                 {isAdmin
                   ? "Como administrador, puedes enviar avisos a cualquier usuario."
                   : "Como instructor, solo puedes enviar avisos a estudiantes inscritos en tus cursos."}
@@ -147,11 +189,11 @@ export default function CrearAviso() {
           </div>
 
           {/* Formulario */}
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg p-8">
             {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+              <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3">
                 <svg
-                  className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+                  className="w-5 h-5 text-red-600 dark:text-red-300 flex-shrink-0 mt-0.5"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -161,7 +203,9 @@ export default function CrearAviso() {
                     clipRule="evenodd"
                   />
                 </svg>
-                <p className="text-sm text-red-800">{error}</p>
+                <p className="text-sm text-red-800 dark:text-red-200">
+                  {error}
+                </p>
               </div>
             )}
 
@@ -172,13 +216,24 @@ export default function CrearAviso() {
                 selectedUser={selectedUser}
                 onClearUser={handleClearUser}
                 label="Usuario destinatario *"
+                disabled={loadingStudents}
+                allowedUserIds={
+                  isInstructor ? (allowedUserIds ?? []) : undefined
+                }
               />
+              {isInstructor &&
+                !loadingStudents &&
+                allowedUserIds?.length === 0 && (
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    No tienes estudiantes inscritos para enviar avisos.
+                  </p>
+                )}
 
               {/* Tipo de aviso */}
               <div>
                 <label
                   htmlFor="tipo"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
                 >
                   Tipo de aviso *
                 </label>
@@ -188,20 +243,16 @@ export default function CrearAviso() {
                   value={formData.tipo}
                   onChange={handleChange}
                   required
-                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                  className="block w-full px-3 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 >
                   <option value="aviso">Aviso</option>
                   <option value="mensaje_sistema">Mensaje del sistema</option>
                   <option value="recordatorio">Recordatorio</option>
                   <option value="urgente">Urgente</option>
                 </select>
-              </div>
-
-              {/* Título */}
-              <div>
                 <label
                   htmlFor="titulo"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
                 >
                   Título *
                 </label>
@@ -209,20 +260,15 @@ export default function CrearAviso() {
                   type="text"
                   id="titulo"
                   name="titulo"
-                  value={formData.titulo}
                   onChange={handleChange}
                   required
                   maxLength={200}
                   placeholder="Ej: Actualización importante del curso"
-                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                  className="block w-full px-3 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 />
-              </div>
-
-              {/* Mensaje */}
-              <div>
                 <label
                   htmlFor="mensaje"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
                 >
                   Mensaje *
                 </label>
@@ -230,11 +276,10 @@ export default function CrearAviso() {
                   id="mensaje"
                   name="mensaje"
                   value={formData.mensaje}
-                  onChange={handleChange}
                   required
                   rows={6}
                   placeholder="Escribe el contenido del aviso..."
-                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent resize-none"
+                  className="block w-full px-3 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent resize-none"
                 />
                 <p className="mt-1 text-sm text-gray-500">
                   {formData.mensaje.length} caracteres

@@ -53,12 +53,14 @@ export default function CrearUsuario() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="mx-auto w-full max-w-2xl">
-        <div className="bg-white rounded-xl shadow-lg p-8">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-lg p-8">
           <div className="mb-6">
-            <h2 className="text-3xl font-bold">Crear Nuevo Usuario</h2>
-            <p className="text-sm text-gray-600 mt-1">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Crear Nuevo Usuario
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
               Como administrador, puedes crear usuarios con cualquier rol.
             </p>
           </div>
@@ -68,7 +70,7 @@ export default function CrearUsuario() {
           {success && (
             <div
               role="status"
-              className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm"
+              className="mb-4 p-3 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-200 rounded-md text-sm"
             >
               {success}
             </div>
@@ -79,7 +81,7 @@ export default function CrearUsuario() {
               <div>
                 <label
                   htmlFor="firstName"
-                  className="block text-sm text-gray-700"
+                  className="block text-sm text-gray-700 dark:text-gray-200"
                 >
                   Nombre
                 </label>
@@ -89,14 +91,14 @@ export default function CrearUsuario() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="lastName"
-                  className="block text-sm text-gray-700"
+                  className="block text-sm text-gray-700 dark:text-gray-200"
                 >
                   Apellido
                 </label>
@@ -106,7 +108,7 @@ export default function CrearUsuario() {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
                 />
               </div>
             </div>
@@ -114,7 +116,7 @@ export default function CrearUsuario() {
             <div>
               <label
                 htmlFor="tipoUsuario"
-                className="block text-sm text-gray-700"
+                className="block text-sm text-gray-700 dark:text-gray-200"
               >
                 Tipo de usuario
               </label>
@@ -123,7 +125,7 @@ export default function CrearUsuario() {
                 name="tipoUsuario"
                 value={tipoUsuario}
                 onChange={(e) => setTipoUsuario(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
               >
                 <option value="estudiante">Estudiante</option>
                 <option value="instructor">Instructor</option>
@@ -132,7 +134,10 @@ export default function CrearUsuario() {
             </div>
 
             <div>
-              <label htmlFor="username" className="block text-sm text-gray-700">
+              <label
+                htmlFor="username"
+                className="block text-sm text-gray-700 dark:text-gray-200"
+              >
                 Usuario
               </label>
               <input
@@ -142,12 +147,15 @@ export default function CrearUsuario() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm text-gray-700 dark:text-gray-200"
+              >
                 Correo electrónico
               </label>
               <input
@@ -157,12 +165,15 @@ export default function CrearUsuario() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm text-gray-700 dark:text-gray-200"
+              >
                 Contraseña
               </label>
               <div className="relative">
@@ -173,12 +184,12 @@ export default function CrearUsuario() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md bg-white text-sm"
+                  className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 mt-0.5"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 mt-0.5"
                 >
                   {showPassword ? (
                     <svg
@@ -229,7 +240,7 @@ export default function CrearUsuario() {
               </button>
               <Link
                 to="/app/admin/usuarios"
-                className="px-6 py-3 text-gray-700 bg-white border-2 border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                className="px-6 py-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
                 Cancelar
               </Link>

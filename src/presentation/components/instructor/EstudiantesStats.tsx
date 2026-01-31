@@ -22,18 +22,22 @@ export default function EstudiantesStats({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       {/* Total estudiantes */}
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-lg shadow">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600">Total estudiantes</p>
-            <p className="text-3xl font-bold mt-1">{totalEstudiantes}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Total estudiantes
+            </p>
+            <p className="text-3xl font-bold mt-1 text-gray-900 dark:text-gray-100">
+              {totalEstudiantes}
+            </p>
             <p className="text-xs text-green-600 mt-1">
               +{nuevosEstudiantes} este mes
             </p>
           </div>
-          <div className="bg-blue-100 p-3 rounded-full">
+          <div className="bg-blue-100 dark:bg-blue-900/40 p-3 rounded-full">
             <svg
-              className="w-8 h-8 text-blue-600"
+              className="w-8 h-8 text-blue-600 dark:text-blue-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -50,16 +54,20 @@ export default function EstudiantesStats({
       </div>
 
       {/* Estudiantes activos */}
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-lg shadow">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600">Estudiantes activos</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Estudiantes activos
+            </p>
             <p className="text-3xl font-bold mt-1 text-green-600">{activos}</p>
-            <p className="text-xs text-gray-500 mt-1">En progreso</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              En progreso
+            </p>
           </div>
-          <div className="bg-green-100 p-3 rounded-full">
+          <div className="bg-green-100 dark:bg-green-900/40 p-3 rounded-full">
             <svg
-              className="w-8 h-8 text-green-600"
+              className="w-8 h-8 text-green-600 dark:text-green-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -76,23 +84,25 @@ export default function EstudiantesStats({
       </div>
 
       {/* Completados */}
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-lg shadow">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600">Completados</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Completados
+            </p>
             <p className="text-3xl font-bold mt-1 text-purple-600">
               {completados}
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {totalInscripciones > 0
                 ? ((completados / totalInscripciones) * 100).toFixed(1)
                 : 0}
               % del total
             </p>
           </div>
-          <div className="bg-purple-100 p-3 rounded-full">
+          <div className="bg-purple-100 dark:bg-purple-900/40 p-3 rounded-full">
             <svg
-              className="w-8 h-8 text-purple-600"
+              className="w-8 h-8 text-purple-600 dark:text-purple-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -109,20 +119,22 @@ export default function EstudiantesStats({
       </div>
 
       {/* Progreso promedio */}
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 rounded-lg shadow">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600">Progreso promedio</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Progreso promedio
+            </p>
             <p className="text-3xl font-bold mt-1 text-blue-600">
               {progresoPromedio.toFixed(1)}%
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {inactivos} sin iniciar
             </p>
           </div>
-          <div className="bg-orange-100 p-3 rounded-full">
+          <div className="bg-orange-100 dark:bg-orange-900/40 p-3 rounded-full">
             <svg
-              className="w-8 h-8 text-orange-600"
+              className="w-8 h-8 text-orange-600 dark:text-orange-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

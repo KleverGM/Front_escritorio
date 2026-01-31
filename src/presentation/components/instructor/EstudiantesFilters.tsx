@@ -35,11 +35,11 @@ export default function EstudiantesFilters({
     searchQuery || filterCurso !== "todos" || filterEstado !== "todos";
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow mb-6">
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 rounded-lg shadow mb-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         {/* Búsqueda */}
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
             Buscar estudiante
           </label>
           <div className="relative">
@@ -48,7 +48,7 @@ export default function EstudiantesFilters({
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Nombre, email o curso..."
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <svg
               className="w-5 h-5 text-gray-400 absolute left-3 top-2.5"
@@ -68,13 +68,13 @@ export default function EstudiantesFilters({
 
         {/* Filtro por curso */}
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
             Filtrar por curso
           </label>
           <select
             value={filterCurso}
             onChange={(e) => onCursoChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="todos">
               Todos los cursos ({inscripcionesCount})
@@ -89,13 +89,13 @@ export default function EstudiantesFilters({
 
         {/* Filtro por estado */}
         <div>
-          <label className="block text-sm font-medium mb-2">
+          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-200">
             Filtrar por estado
           </label>
           <select
             value={filterEstado}
             onChange={(e) => onEstadoChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="todos">Todos ({inscripcionesCount})</option>
             <option value="active">Activos ({activosCount})</option>
@@ -107,15 +107,17 @@ export default function EstudiantesFilters({
 
       {/* Chips de filtros activos */}
       {hasActiveFilters && (
-        <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-200">
-          <span className="text-sm text-gray-600">Filtros activos:</span>
+        <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-200 dark:border-gray-800">
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            Filtros activos:
+          </span>
 
           {searchQuery && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 rounded-full text-sm">
               Búsqueda: {searchQuery}
               <button
                 onClick={() => onSearchChange("")}
-                className="hover:bg-blue-200 rounded-full p-0.5"
+                className="hover:bg-blue-200 dark:hover:bg-blue-900/60 rounded-full p-0.5"
               >
                 <svg
                   className="w-3 h-3"
@@ -133,11 +135,11 @@ export default function EstudiantesFilters({
           )}
 
           {filterCurso !== "todos" && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 rounded-full text-sm">
               Curso: {filterCurso}
               <button
                 onClick={() => onCursoChange("todos")}
-                className="hover:bg-purple-200 rounded-full p-0.5"
+                className="hover:bg-purple-200 dark:hover:bg-purple-900/60 rounded-full p-0.5"
               >
                 <svg
                   className="w-3 h-3"
@@ -155,7 +157,7 @@ export default function EstudiantesFilters({
           )}
 
           {filterEstado !== "todos" && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200 rounded-full text-sm">
               Estado:{" "}
               {filterEstado === "active"
                 ? "Activos"
@@ -164,7 +166,7 @@ export default function EstudiantesFilters({
                   : "Sin iniciar"}
               <button
                 onClick={() => onEstadoChange("todos")}
-                className="hover:bg-green-200 rounded-full p-0.5"
+                className="hover:bg-green-200 dark:hover:bg-green-900/60 rounded-full p-0.5"
               >
                 <svg
                   className="w-3 h-3"
@@ -183,7 +185,7 @@ export default function EstudiantesFilters({
 
           <button
             onClick={onClearFilters}
-            className="text-sm text-gray-600 hover:text-gray-900 underline"
+            className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white underline"
           >
             Limpiar todos
           </button>

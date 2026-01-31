@@ -146,18 +146,20 @@ export default function MisEstudiantes() {
   if (error) return <ErrorMessage message={error} onRetry={loadData} />;
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Mis Estudiantes</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Mis Estudiantes
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">
             Estudiantes inscritos en tus cursos
           </p>
         </div>
         <button
           onClick={loadData}
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-200"
         >
           <svg
             className="w-5 h-5"
@@ -237,7 +239,7 @@ export default function MisEstudiantes() {
         <>
           {/* Información de resultados */}
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Mostrando{" "}
               <span className="font-semibold">
                 {sortedInscripciones.length}

@@ -37,7 +37,7 @@ export default function AnalyticsDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -45,22 +45,22 @@ export default function AnalyticsDashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
         <ErrorMessage message={error} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               Dashboard de Analytics
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 dark:text-gray-300 mt-1">
               Análisis de actividad y comportamiento de usuarios
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function AnalyticsDashboard() {
               className={`px-4 py-2 rounded-lg ${
                 periodo === "dia"
                   ? "bg-[#f8b31d] text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
               }`}
             >
               Día
@@ -82,7 +82,7 @@ export default function AnalyticsDashboard() {
               className={`px-4 py-2 rounded-lg ${
                 periodo === "semana"
                   ? "bg-[#f8b31d] text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
               }`}
             >
               Semana
@@ -92,7 +92,7 @@ export default function AnalyticsDashboard() {
               className={`px-4 py-2 rounded-lg ${
                 periodo === "mes"
                   ? "bg-[#f8b31d] text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
               }`}
             >
               Mes
@@ -106,7 +106,7 @@ export default function AnalyticsDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
               <Card>
                 <CardContent>
-                  <div className="text-sm text-gray-600 mb-1">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                     Total de Eventos
                   </div>
                   <div className="text-3xl font-bold text-blue-600">
@@ -117,7 +117,9 @@ export default function AnalyticsDashboard() {
 
               <Card>
                 <CardContent>
-                  <div className="text-sm text-gray-600 mb-1">Eventos Hoy</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                    Eventos Hoy
+                  </div>
                   <div className="text-3xl font-bold text-green-600">
                     {estadisticas.eventos_hoy}
                   </div>
@@ -126,7 +128,7 @@ export default function AnalyticsDashboard() {
 
               <Card>
                 <CardContent>
-                  <div className="text-sm text-gray-600 mb-1">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                     Eventos Semana
                   </div>
                   <div className="text-3xl font-bold text-purple-600">
@@ -137,7 +139,7 @@ export default function AnalyticsDashboard() {
 
               <Card>
                 <CardContent>
-                  <div className="text-sm text-gray-600 mb-1">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                     Usuarios Activos
                   </div>
                   <div className="text-3xl font-bold text-yellow-600">
@@ -157,44 +159,44 @@ export default function AnalyticsDashboard() {
                 estadisticas.cursos_mas_visitados.length > 0 ? (
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                      <thead className="bg-gray-50 border-b border-gray-200">
+                      <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                             #
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                             Curso
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                             Visitas
                           </th>
-                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                             Acciones
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
+                      <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
                         {estadisticas.cursos_mas_visitados.map(
                           (curso, index) => (
                             <tr
                               key={curso.curso_id}
-                              className="hover:bg-gray-50"
+                              className="hover:bg-gray-50 dark:hover:bg-gray-800"
                             >
-                              <td className="px-6 py-4 text-sm text-gray-500">
+                              <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                 {index + 1}
                               </td>
                               <td className="px-6 py-4">
-                                <div className="text-sm font-medium text-gray-900">
+                                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                   {curso.titulo}
                                 </div>
                               </td>
-                              <td className="px-6 py-4 text-sm text-gray-900">
+                              <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                                 {curso.visitas}
                               </td>
                               <td className="px-6 py-4 text-right text-sm">
                                 <Link
                                   to={`/app/admin/cursos/${curso.curso_id}`}
-                                  className="text-blue-600 hover:text-blue-800"
+                                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800"
                                 >
                                   Ver detalles
                                 </Link>
@@ -206,7 +208,7 @@ export default function AnalyticsDashboard() {
                     </table>
                   </div>
                 ) : (
-                  <p className="text-center text-gray-600 py-8">
+                  <p className="text-center text-gray-600 dark:text-gray-300 py-8">
                     No hay datos de cursos para este período
                   </p>
                 )}
@@ -239,14 +241,14 @@ export default function AnalyticsDashboard() {
                         return (
                           <div key={tipo}>
                             <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm font-medium text-gray-700">
+                              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
                                 {tipoLabel}
                               </span>
-                              <span className="text-sm text-gray-600">
+                              <span className="text-sm text-gray-600 dark:text-gray-300">
                                 {cantidadNum} ({porcentaje.toFixed(1)}%)
                               </span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2">
                               <div
                                 className="bg-blue-600 h-2 rounded-full"
                                 style={{ width: `${porcentaje}%` }}

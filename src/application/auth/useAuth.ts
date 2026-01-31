@@ -27,7 +27,8 @@ export function useAuth() {
     if (!access) return null;
     const payload = parseJwt(access);
     if (!payload) return null;
-    return payload.user ?? null;
+    // Si el token tiene información del usuario, usarla inmediatamente
+    return payload.user ?? payload ?? null;
   });
 
   useEffect(() => {
@@ -44,38 +45,23 @@ export function useAuth() {
         return;
       }
 
-      // If token already contains user info, use it
-      if (payload.user) {
-        if (mounted) setUser(payload.user);
-        return;
-      }
-
-      // If token contains direct claims like username/first_name, use them
-      const maybeUserFromClaims =
-        payload.username || payload.first_name || payload.email
-          ? payload
-          : null;
-      if (maybeUserFromClaims) {
-        if (mounted) setUser(maybeUserFromClaims);
-        return;
-      }
-
-      // Solo si no hay información suficiente en el token, intentar cargar del backend
+      // Siempre intentar cargar del backend para tener datos completos
       const userId = payload.user_id ?? payload.sub ?? null;
       if (!userId || isNaN(Number(userId))) {
-        if (mounted) setUser(null);
+        // Si no hay userId, usar lo que haya en el token
+        if (mounted) setUser(payload.user ?? payload);
         return;
       }
 
-      // Intentar cargar solo con el ID del usuario (no usar /users/me/)
+      // Cargar datos completos del backend
       try {
         const res = await authHttp.get(`/users/${userId}/`);
-        if (mounted) setUser(res?.data ?? null);
+        if (mounted && res?.data) {
+          setUser(res.data);
+        }
       } catch (e) {
-        console.warn(
-          "No se pudo cargar el perfil del usuario, usando datos del token",
-        );
-        if (mounted) setUser(payload); // Usar lo que haya en el token
+        console.warn("No se pudo cargar el perfil del usuario desde backend");
+        // Mantener lo que ya está en el estado (del token)
       }
     }
 

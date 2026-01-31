@@ -18,22 +18,26 @@ export default function ResenaStats({
   distribucion,
 }: ResenaStatsProps) {
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 mb-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+    <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/40 dark:to-purple-950/40 rounded-lg p-6 mb-6 border border-transparent dark:border-gray-800">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
         Estadísticas Generales
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Total de reseñas */}
-        <div className="bg-white rounded-lg p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Reseñas</p>
-              <p className="text-2xl font-bold text-gray-900">{totalResenas}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Total Reseñas
+              </p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                {totalResenas}
+              </p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center">
               <svg
-                className="w-6 h-6 text-blue-600"
+                className="w-6 h-6 text-blue-600 dark:text-blue-300"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -50,17 +54,19 @@ export default function ResenaStats({
         </div>
 
         {/* Promedio de calificación */}
-        <div className="bg-white rounded-lg p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Promedio</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Promedio
+              </p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {promedioRating.toFixed(1)}
               </p>
             </div>
-            <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/40 rounded-full flex items-center justify-center">
               <svg
-                className="w-6 h-6 text-yellow-600"
+                className="w-6 h-6 text-yellow-600 dark:text-yellow-300"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -71,17 +77,19 @@ export default function ResenaStats({
         </div>
 
         {/* 5 estrellas */}
-        <div className="bg-white rounded-lg p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">5 Estrellas</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                5 Estrellas
+              </p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 {distribucion["5"]}
               </p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/40 rounded-full flex items-center justify-center">
               <svg
-                className="w-6 h-6 text-green-600"
+                className="w-6 h-6 text-green-600 dark:text-green-300"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -98,8 +106,10 @@ export default function ResenaStats({
         </div>
 
         {/* Distribución de calificaciones */}
-        <div className="bg-white rounded-lg p-4 shadow-sm">
-          <p className="text-sm text-gray-600 mb-2">Distribución</p>
+        <div className="bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-800">
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+            Distribución
+          </p>
           <div className="space-y-1">
             {[5, 4, 3, 2, 1].map((rating) => {
               const count =
@@ -109,14 +119,16 @@ export default function ResenaStats({
 
               return (
                 <div key={rating} className="flex items-center gap-2">
-                  <span className="text-xs text-gray-600 w-8">{rating}⭐</span>
-                  <div className="flex-1 bg-gray-200 rounded-full h-2">
+                  <span className="text-xs text-gray-600 dark:text-gray-300 w-8">
+                    {rating}⭐
+                  </span>
+                  <div className="flex-1 bg-gray-200 dark:bg-gray-800 rounded-full h-2">
                     <div
                       className="bg-[#f8b31d] h-2 rounded-full transition-all"
                       style={{ width: `${porcentaje}%` }}
                     />
                   </div>
-                  <span className="text-xs text-gray-600 w-8 text-right">
+                  <span className="text-xs text-gray-600 dark:text-gray-300 w-8 text-right">
                     {count}
                   </span>
                 </div>

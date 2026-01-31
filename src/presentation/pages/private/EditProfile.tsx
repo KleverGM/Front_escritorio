@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../application/auth/useAuth";
 import { authHttp } from "../../../infrastructure/http/httpClients";
+import { usuarioService } from "../../../application/usuarios/usuario.service";
 import {
   ErrorMessage,
   SuccessMessage,
@@ -17,6 +18,12 @@ export default function EditProfile() {
     firstName: "",
     lastName: "",
     email: "",
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -41,6 +48,13 @@ export default function EditProfile() {
     });
   };
 
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordData({
+      ...passwordData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -61,6 +75,31 @@ export default function EditProfile() {
       }
 
       await authHttp.patch(`/users/${user.id}/`, updateData);
+
+      const wantsPasswordChange =
+        passwordData.currentPassword ||
+        passwordData.newPassword ||
+        passwordData.confirmPassword;
+
+      if (wantsPasswordChange) {
+        if (!passwordData.currentPassword || !passwordData.newPassword) {
+          setError("Debes completar la contraseña actual y la nueva");
+          return;
+        }
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+          setError("Las nuevas contraseñas no coinciden");
+          return;
+        }
+        if (passwordData.newPassword.length < 8) {
+          setError("La nueva contraseña debe tener al menos 8 caracteres");
+          return;
+        }
+
+        await usuarioService.cambiarMiPassword({
+          old_password: passwordData.currentPassword,
+          new_password: passwordData.newPassword,
+        });
+      }
 
       setSuccess(true);
       setTimeout(() => {
@@ -277,6 +316,68 @@ export default function EditProfile() {
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                   placeholder="Tu nombre"
                 />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className="border-t pt-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Cambiar contraseña
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="currentPassword"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Contraseña actual
+                  </label>
+                  <input
+                    type="password"
+                    id="currentPassword"
+                    name="currentPassword"
+                    value={passwordData.currentPassword}
+                    onChange={handlePasswordChange}
+                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                    placeholder="Tu contraseña actual"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="newPassword"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Nueva contraseña
+                  </label>
+                  <input
+                    type="password"
+                    id="newPassword"
+                    name="newPassword"
+                    value={passwordData.newPassword}
+                    onChange={handlePasswordChange}
+                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                    placeholder="Mínimo 8 caracteres"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Confirmar nueva contraseña
+                  </label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={passwordData.confirmPassword}
+                    onChange={handlePasswordChange}
+                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                    placeholder="Repite la nueva contraseña"
+                  />
+                </div>
               </div>
             </div>
 

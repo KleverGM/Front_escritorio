@@ -48,14 +48,14 @@ export default function CatalogoCursos() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             Catálogo de Cursos
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-600 dark:text-gray-300 mt-1">
             Explora nuestra amplia selección de cursos
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function CatalogoCursos() {
         {/* Resultados */}
         {!loading && !error && (
           <>
-            <div className="mb-4 text-sm text-gray-600">
+            <div className="mb-4 text-sm text-gray-600 dark:text-gray-300">
               {cursos.length} curso{cursos.length !== 1 ? "s" : ""} encontrado
               {cursos.length !== 1 ? "s" : ""}
             </div>
@@ -100,7 +100,7 @@ export default function CatalogoCursos() {
                     actions={
                       <Link
                         to={`/app/cursos/${curso.id}`}
-                        className="px-4 py-2 bg-[#f8b31d] text-white rounded-lg hover:bg-[#e0a219] text-sm"
+                        className="px-4 py-2 bg-[#f8b31d] text-white rounded-lg hover:bg-[#e0a219] text-sm shadow-sm"
                       >
                         Ver Detalles
                       </Link>

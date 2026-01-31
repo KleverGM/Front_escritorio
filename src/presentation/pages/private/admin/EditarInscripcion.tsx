@@ -128,7 +128,7 @@ export default function EditarInscripcion() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center overflow-x-hidden">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center overflow-x-hidden">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -136,7 +136,7 @@ export default function EditarInscripcion() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center overflow-x-hidden">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center overflow-x-hidden">
         <SuccessMessage
           title="Inscripción actualizada"
           message="Redirigiendo a la lista de inscripciones..."
@@ -146,22 +146,22 @@ export default function EditarInscripcion() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 overflow-x-hidden">
       <div className="max-w-3xl mx-auto w-full">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 Editar Inscripción
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
                 Modifica el progreso y estado de la inscripción
               </p>
             </div>
             <Link
               to="/app/admin/inscripciones"
-              className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             >
               ← Volver
             </Link>
@@ -177,8 +177,8 @@ export default function EditarInscripcion() {
         {/* Información de la inscripción */}
         {inscripcion && (
           <>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6 mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Información de la Inscripción
               </h2>
               <div className="space-y-3">
@@ -193,23 +193,23 @@ export default function EditarInscripcion() {
                     </span>
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {inscripcion.usuario.first_name &&
                       inscripcion.usuario.last_name
                         ? `${inscripcion.usuario.first_name} ${inscripcion.usuario.last_name}`
                         : inscripcion.usuario.username}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
                       {inscripcion.usuario.email}
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-gray-200">
-                  <div className="text-sm text-gray-600">
+                <div className="pt-3 border-t border-gray-200 dark:border-gray-800">
+                  <div className="text-sm text-gray-600 dark:text-gray-300">
                     <strong>Curso:</strong> {inscripcion.curso.titulo}
                   </div>
-                  <div className="text-sm text-gray-600 mt-1">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                     <strong>Fecha de inscripción:</strong>{" "}
                     {new Date(inscripcion.fecha_inscripcion).toLocaleDateString(
                       "es-ES",
@@ -221,7 +221,7 @@ export default function EditarInscripcion() {
                     )}
                   </div>
                   {inscripcion.fecha_completado && (
-                    <div className="text-sm text-gray-600 mt-1">
+                    <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                       <strong>Fecha de completado:</strong>{" "}
                       {new Date(
                         inscripcion.fecha_completado,
@@ -239,12 +239,12 @@ export default function EditarInscripcion() {
             {/* Formulario */}
             <form
               onSubmit={handleSubmit}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+              className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6"
             >
               <div className="space-y-6">
                 {/* Progreso */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                     Progreso del Curso (%)
                   </label>
                   <input
@@ -255,13 +255,13 @@ export default function EditarInscripcion() {
                     min="0"
                     max="100"
                     step="0.01"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                   />
-                  <p className="mt-2 text-xs text-gray-500">
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     Ingresa un valor entre 0 y 100
                   </p>
                   {/* Barra de progreso visual */}
-                  <div className="mt-3 w-full bg-gray-200 rounded-full h-3">
+                  <div className="mt-3 w-full bg-gray-200 dark:bg-gray-800 rounded-full h-3">
                     <div
                       className="bg-[#f8b31d] h-3 rounded-full transition-all"
                       style={{ width: `${formData.progreso}%` }}
@@ -281,12 +281,12 @@ export default function EditarInscripcion() {
                   />
                   <label
                     htmlFor="completado"
-                    className="text-sm font-medium text-gray-700"
+                    className="text-sm font-medium text-gray-700 dark:text-gray-200"
                   >
                     Curso completado
                   </label>
                 </div>
-                <p className="text-xs text-gray-500 -mt-4 ml-7">
+                <p className="text-xs text-gray-500 dark:text-gray-400 -mt-4 ml-7">
                   Marca esta opción cuando el estudiante haya completado el
                   curso
                 </p>
@@ -302,7 +302,7 @@ export default function EditarInscripcion() {
                   </button>
                   <Link
                     to="/app/admin/inscripciones"
-                    className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-center"
+                    className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-center"
                   >
                     Cancelar
                   </Link>
@@ -311,11 +311,11 @@ export default function EditarInscripcion() {
             </form>
 
             {/* Sección de eliminar */}
-            <div className="bg-red-50 rounded-lg border border-red-200 p-6 mt-6">
+            <div className="mt-6 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6">
               <h3 className="text-lg font-semibold text-red-900 mb-2">
                 Zona Peligrosa
               </h3>
-              <p className="text-sm text-red-700 mb-4">
+              <p className="text-sm text-red-700 dark:text-red-300 mb-4">
                 Eliminar esta inscripción es una acción permanente y no se puede
                 deshacer.
               </p>
@@ -323,13 +323,13 @@ export default function EditarInscripcion() {
                 <button
                   type="button"
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                  className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
                 >
                   Eliminar Inscripción
                 </button>
               ) : (
                 <div className="space-y-3">
-                  <p className="text-sm font-medium text-red-900">
+                  <p className="text-sm font-medium text-red-900 dark:text-red-200">
                     ¿Estás seguro de que deseas eliminar esta inscripción?
                   </p>
                   <div className="flex gap-3">
@@ -344,7 +344,7 @@ export default function EditarInscripcion() {
                     <button
                       type="button"
                       onClick={() => setShowDeleteConfirm(false)}
-                      className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="px-4 py-2 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     >
                       Cancelar
                     </button>

@@ -3,3 +3,4 @@ export { default as InstructorDashboard } from "./InstructorDashboard";
 export { default as GestionMisCursos } from "./GestionMisCursos";
 export { default as MisResenas } from "./MisResenas";
 export { default as MisEstudiantes } from "./MisEstudiantes";
+export { default as EstadisticasCurso } from "./EstadisticasCurso";

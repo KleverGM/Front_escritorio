@@ -44,11 +44,13 @@ export default function Login({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center">
       <div className="mx-auto w-full max-w-2xl p-6">
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <h2 className="text-3xl font-bold text-center">Inicia sesión</h2>
-          <p className="text-sm text-gray-600 text-center mb-6">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-slate-800">
+          <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white">
+            Inicia sesión
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 text-center mb-6">
             Accede a tu cuenta
           </p>
 
@@ -57,7 +59,10 @@ export default function Login({
           <form onSubmit={onSubmit}>
             <div className="grid grid-cols-1 gap-4">
               <div>
-                <label htmlFor="email" className="block text-sm text-gray-700">
+                <label
+                  htmlFor="email"
+                  className="block text-sm text-slate-700 dark:text-slate-300"
+                >
                   Correo electrónico
                 </label>
                 <input
@@ -67,14 +72,14 @@ export default function Login({
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="ejemplo@correo.com"
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm text-gray-700"
+                  className="block text-sm text-slate-700 dark:text-slate-300"
                 >
                   Contraseña
                 </label>
@@ -85,12 +90,12 @@ export default function Login({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md bg-white text-sm"
+                    className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg bg-white text-sm dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-600 hover:text-gray-900"
+                    className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-600 hover:text-gray-900 dark:text-slate-300 dark:hover:text-white"
                   >
                     {showPassword ? (
                       <svg
@@ -134,14 +139,14 @@ export default function Login({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-2 py-3 bg-[#f8b31d] border-2 border-black text-lg rounded-md font-medium"
+                className="w-full mt-2 py-3 bg-[#f8b31d] border-2 border-black text-lg rounded-lg font-medium hover:shadow-md disabled:opacity-50"
               >
                 {loading ? "Ingresando..." : "Iniciar sesión"}
               </button>
             </div>
           </form>
 
-          <p className="mt-4 text-sm text-center text-gray-600">
+          <p className="mt-4 text-sm text-center text-slate-600 dark:text-slate-400">
             ¿No tienes cuenta?{" "}
             <Link to="/register" className="text-blue-600 hover:underline">
               Regístrate

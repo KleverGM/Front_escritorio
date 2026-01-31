@@ -89,15 +89,15 @@ export default function GestionAvisos() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               Gestión de Avisos
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 dark:text-gray-300 mt-1">
               Administra los avisos del sistema
             </p>
           </div>
@@ -132,7 +132,7 @@ export default function GestionAvisos() {
                       page: 1,
                     })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Todos los tipos</option>
                   {TIPOS_AVISO_OPTIONS.map((tipo) => (
@@ -175,33 +175,36 @@ export default function GestionAvisos() {
                   <CardContent className="p-0">
                     <div className="overflow-x-auto">
                       <table className="w-full">
-                        <thead className="bg-gray-50 border-b border-gray-200">
+                        <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                               Título
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                               Tipo
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                               Destinatarios
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                               Fecha
                             </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
                               Acciones
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
                           {avisos.map((aviso) => (
-                            <tr key={aviso.id} className="hover:bg-gray-50">
+                            <tr
+                              key={aviso.id}
+                              className="hover:bg-gray-50 dark:hover:bg-gray-800"
+                            >
                               <td className="px-6 py-4">
-                                <div className="text-sm font-medium text-gray-900">
+                                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                   {aviso.titulo}
                                 </div>
-                                <div className="text-sm text-gray-500 truncate max-w-md">
+                                <div className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-md">
                                   {aviso.contenido}
                                 </div>
                               </td>
@@ -214,12 +217,12 @@ export default function GestionAvisos() {
                                   {aviso.tipo}
                                 </span>
                               </td>
-                              <td className="px-6 py-4 text-sm text-gray-900">
+                              <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                                 {aviso.para_todos
                                   ? "Todos"
                                   : `${aviso.usuarios?.length || 0} usuario(s)`}
                               </td>
-                              <td className="px-6 py-4 text-sm text-gray-500">
+                              <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                 {new Date(
                                   aviso.fecha_creacion,
                                 ).toLocaleDateString()}

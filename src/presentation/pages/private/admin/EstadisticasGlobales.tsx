@@ -34,7 +34,7 @@ export default function EstadisticasGlobales() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -42,7 +42,7 @@ export default function EstadisticasGlobales() {
 
   if (error || !stats) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
         <ErrorMessage
           message={error || "No se pudieron cargar las estadísticas"}
         />
@@ -51,28 +51,28 @@ export default function EstadisticasGlobales() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <Link
             to="/app/admin"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
+            className="inline-flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mb-4"
           >
             ← Volver al Panel de Admin
           </Link>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 Estadísticas Globales
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
                 Vista general de la plataforma
               </p>
             </div>
             <button
               onClick={loadStats}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
             >
               <svg
                 className="w-5 h-5"
@@ -97,17 +97,19 @@ export default function EstadisticasGlobales() {
           <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Total Cursos</p>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                  Total Cursos
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {stats.total_cursos}
                 </p>
                 <p className="text-xs text-green-600 mt-1">
                   {stats.cursos_activos} activos
                 </p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-lg flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-blue-600"
+                  className="w-6 h-6 text-blue-600 dark:text-blue-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -126,17 +128,19 @@ export default function EstadisticasGlobales() {
           <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Estudiantes</p>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                  Estudiantes
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {stats.total_estudiantes}
                 </p>
                 <p className="text-xs text-green-600 mt-1">
                   +{stats.nuevos_estudiantes_mes} este mes
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/40 rounded-lg flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-green-600"
+                  className="w-6 h-6 text-green-600 dark:text-green-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -155,14 +159,16 @@ export default function EstadisticasGlobales() {
           <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Instructores</p>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                  Instructores
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {stats.total_instructores}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/40 rounded-lg flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-purple-600"
+                  className="w-6 h-6 text-purple-600 dark:text-purple-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -181,14 +187,16 @@ export default function EstadisticasGlobales() {
           <Card>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Inscripciones</p>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                  Inscripciones
+                </p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                   {stats.total_inscripciones}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/40 rounded-lg flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-yellow-600"
+                  className="w-6 h-6 text-yellow-600 dark:text-yellow-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -224,7 +232,7 @@ export default function EstadisticasGlobales() {
                 {stats.cursos_populares.map((curso, index) => (
                   <div
                     key={curso.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg"
                   >
                     <div className="flex items-center gap-4">
                       <span className="text-2xl font-bold text-gray-400">
@@ -233,11 +241,11 @@ export default function EstadisticasGlobales() {
                       <div>
                         <Link
                           to={`/app/admin/cursos/${curso.id}`}
-                          className="font-semibold text-gray-900 hover:text-[#f8b31d]"
+                          className="font-semibold text-gray-900 dark:text-gray-100 hover:text-[#f8b31d]"
                         >
                           {curso.titulo}
                         </Link>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
                           {curso.num_inscripciones} inscripciones •{" "}
                           {curso.instructor}
                         </p>

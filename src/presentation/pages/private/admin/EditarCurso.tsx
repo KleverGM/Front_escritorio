@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { authHttp } from "../../../../infrastructure/http/httpClients";
+import { useAuth } from "../../../../application/auth/useAuth";
 import { LoadingSpinner, ErrorMessage } from "../../../components/common";
 import CursoInfoCard from "../../../components/admin/CursoInfoCard";
 import CursoEditForm from "../../../components/admin/CursoEditForm";
@@ -29,6 +30,7 @@ interface Curso {
 export default function EditarCurso() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [curso, setCurso] = useState<Curso | null>(null);
   const [instructores, setInstructores] = useState<any[]>([]);
@@ -36,6 +38,12 @@ export default function EditarCurso() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  // Determinar la ruta de retorno según el rol
+  const userRole =
+    user?.tipo_usuario || user?.perfil || user?.role || "estudiante";
+  const backPath =
+    userRole === "instructor" ? "/app/instructor/cursos" : "/app/admin/cursos";
 
   const [formData, setFormData] = useState({
     titulo: "",
@@ -102,7 +110,7 @@ export default function EditarCurso() {
       await authHttp.patch(`/cursos/${id}/`, formData);
       setSuccess(true);
       setTimeout(() => {
-        navigate("/app/admin/cursos");
+        navigate(backPath);
       }, 1500);
     } catch (err: any) {
       setError(
@@ -171,7 +179,7 @@ export default function EditarCurso() {
     try {
       await authHttp.delete(`/cursos/${id}/`);
       alert("Curso eliminado exitosamente");
-      navigate("/app/admin/cursos");
+      navigate(backPath);
     } catch (err: any) {
       // El backend puede devolver un objeto con detalles del error
       const errorData = err?.response?.data;
@@ -207,7 +215,7 @@ export default function EditarCurso() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -215,11 +223,11 @@ export default function EditarCurso() {
 
   if (error && !curso) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
         <div className="max-w-3xl mx-auto">
           <ErrorMessage message={error} />
           <Link
-            to="/app/admin/cursos"
+            to={backPath}
             className="mt-4 inline-block text-[#f8b31d] hover:underline"
           >
             ← Volver a la lista
@@ -230,18 +238,20 @@ export default function EditarCurso() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 overflow-x-hidden">
       <div className="max-w-4xl mx-auto w-full">
         {/* Header */}
         <div className="mb-6">
           <Link
-            to="/app/admin/cursos"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
+            to={backPath}
+            className="inline-flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mb-4"
           >
             ← Volver a Gestión de Cursos
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Editar Curso</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Editar Curso
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">
             Modifica los detalles del curso o cambia su estado
           </p>
         </div>
@@ -254,6 +264,7 @@ export default function EditarCurso() {
             onToggleActivo={toggleActivo}
             onEliminar={handleEliminar}
             saving={saving}
+            userRole={userRole}
           />
         )}
 
@@ -273,6 +284,8 @@ export default function EditarCurso() {
           onInstructorChange={handleInstructorChange}
           onSubmit={handleSubmit}
           saving={saving}
+          userRole={userRole}
+          backPath={backPath}
         />
       </div>
     </div>

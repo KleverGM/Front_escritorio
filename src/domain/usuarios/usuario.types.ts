@@ -37,6 +37,20 @@ export interface UsuarioFiltros {
   search?: string;
 }
 
+export interface UsuarioEstadisticasCurso {
+  id: number;
+  titulo: string;
+  imagen?: string | null;
+}
+
+export interface UsuarioEstadisticas {
+  total_cursos_inscritos: number;
+  cursos_completados: number;
+  progreso_promedio: number;
+  total_tiempo_estudiado: number;
+  cursos_recientes: UsuarioEstadisticasCurso[];
+}
+
 export const PERFILES = [
   { value: "estudiante", label: "Estudiante" },
   { value: "instructor", label: "Instructor" },

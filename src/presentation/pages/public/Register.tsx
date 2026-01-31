@@ -63,13 +63,13 @@ export default function Register({
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center">
       <div className="mx-auto w-full max-w-2xl p-6">
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <h2 className="text-3xl font-bold text-center">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-slate-800">
+          <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white">
             Nos alegra conocerte
           </h2>
-          <p className="text-sm text-gray-600 text-center mb-6">
+          <p className="text-sm text-slate-600 dark:text-slate-400 text-center mb-6">
             Regístrate para comenzar tu aprendizaje.
           </p>
 
@@ -91,7 +91,7 @@ export default function Register({
                 <div>
                   <label
                     htmlFor="firstName"
-                    className="block text-sm text-gray-700"
+                    className="block text-sm text-slate-700 dark:text-slate-300"
                   >
                     Nombre
                   </label>
@@ -101,14 +101,14 @@ export default function Register({
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                   />
                 </div>
 
                 <div>
                   <label
                     htmlFor="lastName"
-                    className="block text-sm text-gray-700"
+                    className="block text-sm text-slate-700 dark:text-slate-300"
                   >
                     Apellido
                   </label>
@@ -118,7 +118,7 @@ export default function Register({
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -126,7 +126,7 @@ export default function Register({
               <div>
                 <label
                   htmlFor="username"
-                  className="block text-sm text-gray-700"
+                  className="block text-sm text-slate-700 dark:text-slate-300"
                 >
                   Usuario
                 </label>
@@ -136,12 +136,15 @@ export default function Register({
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm text-gray-700">
+                <label
+                  htmlFor="email"
+                  className="block text-sm text-slate-700 dark:text-slate-300"
+                >
                   Correo electrónico
                 </label>
                 <input
@@ -151,14 +154,14 @@ export default function Register({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm text-gray-700"
+                  className="block text-sm text-slate-700 dark:text-slate-300"
                 >
                   Contraseña
                 </label>
@@ -170,12 +173,12 @@ export default function Register({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md bg-white text-sm"
+                    className="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg bg-white text-sm dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-600 hover:text-gray-900"
+                    className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-600 hover:text-gray-900 dark:text-slate-300 dark:hover:text-white"
                   >
                     {showPassword ? (
                       <svg
@@ -219,14 +222,14 @@ export default function Register({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-2 py-3 bg-[#f8b31d] border-2 border-black text-lg rounded-md font-medium"
+                className="w-full mt-2 py-3 bg-[#f8b31d] border-2 border-black text-lg rounded-lg font-medium hover:shadow-md disabled:opacity-50"
               >
                 {loading ? "Registrando..." : "Crear cuenta"}
               </button>
             </div>
           </form>
 
-          <p className="mt-4 text-sm text-center text-gray-600">
+          <p className="mt-4 text-sm text-center text-slate-600 dark:text-slate-400">
             ¿Ya tienes cuenta?{" "}
             <Link to="/login" className="text-blue-600 hover:underline">
               Iniciar sesión

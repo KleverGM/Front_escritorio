@@ -9,6 +9,7 @@ interface SeccionFormDialogProps {
   moduloId: number;
   initialData?: Partial<SeccionFormData>;
   title?: string;
+  totalSecciones?: number;
 }
 
 export default function SeccionFormDialog({
@@ -18,17 +19,19 @@ export default function SeccionFormDialog({
   moduloId,
   initialData,
   title = "Crear Sección",
+  totalSecciones = 0,
 }: SeccionFormDialogProps) {
   const [loading, setLoading] = useState(false);
+  const siguienteOrden = initialData?.orden || totalSecciones + 1;
   const [formData, setFormData] = useState<Partial<SeccionFormData>>({
     titulo: "",
     contenido: "",
     video_url: "",
     video_file: null,
     archivo: null,
-    orden: 1,
-    modulo_id: moduloId,
-    duracion_minutos: 0,
+    orden: siguienteOrden,
+    modulo: moduloId,
+    duracion_minutos: 5,
     es_preview: false,
   });
 
@@ -41,9 +44,9 @@ export default function SeccionFormDialog({
         video_url: initialData.video_url || "",
         video_file: null,
         archivo: null,
-        orden: initialData.orden || 1,
-        modulo_id: moduloId,
-        duracion_minutos: initialData.duracion_minutos || 0,
+        orden: initialData.orden || siguienteOrden,
+        modulo: moduloId,
+        duracion_minutos: initialData.duracion_minutos || 5,
         es_preview: initialData.es_preview || false,
       });
     } else {
@@ -53,13 +56,13 @@ export default function SeccionFormDialog({
         video_url: "",
         video_file: null,
         archivo: null,
-        orden: 1,
-        modulo_id: moduloId,
-        duracion_minutos: 0,
+        orden: siguienteOrden,
+        modulo: moduloId,
+        duracion_minutos: 5,
         es_preview: false,
       });
     }
-  }, [initialData, moduloId]);
+  }, [initialData, moduloId, siguienteOrden]);
 
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [archivoPreview, setArchivoPreview] = useState<string | null>(null);
@@ -116,8 +119,12 @@ export default function SeccionFormDialog({
             value={formData.titulo}
             onChange={handleChange}
             required
+            placeholder="Ej: Introducción a Variables en Python"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d]"
           />
+          <p className="mt-1 text-xs text-gray-500">
+            Nombre de la lección que verán los estudiantes
+          </p>
         </div>
 
         {/* Contenido */}
@@ -131,44 +138,63 @@ export default function SeccionFormDialog({
             onChange={handleChange}
             required
             rows={4}
+            placeholder="Describe el contenido de esta lección. Qué aprenderán los estudiantes, conceptos clave, ejemplos..."
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d]"
           />
+          <p className="mt-1 text-xs text-gray-500">
+            Descripción detallada de la lección
+          </p>
         </div>
 
-        {/* Video URL */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            URL del Video (YouTube, Vimeo, etc.)
-          </label>
-          <input
-            type="url"
-            name="video_url"
-            value={formData.video_url}
-            onChange={handleChange}
-            placeholder="https://youtube.com/watch?v=..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d]"
+        {/* Video - Sección con indicador de opciones */}
+        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+          <p className="text-sm font-medium text-gray-700 mb-3">
+            Video de la lección{" "}
+            <span className="text-gray-400">(opcional - elige una opción)</span>
+          </p>
+
+          {/* Video URL */}
+          <div className="mb-3">
+            <label className="block text-sm text-gray-600 mb-2">
+              URL del Video (YouTube, Vimeo, etc.)
+            </label>
+            <input
+              type="url"
+              name="video_url"
+              value={formData.video_url}
+              onChange={handleChange}
+              placeholder="https://youtube.com/watch?v=..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d]"
+            />
+          </div>
+
+          <div className="text-center text-xs text-gray-500 my-2">O</div>
+
+          {/* Video File */}
+          <FileUpload
+            label="Sube un archivo de video MP4"
+            accept="video/mp4"
+            onChange={(file) =>
+              setFormData((prev) => ({ ...prev, video_file: file }))
+            }
+            maxSize={100}
           />
         </div>
-
-        {/* Video File */}
-        <FileUpload
-          label="O sube un archivo de video MP4"
-          accept="video/mp4"
-          onChange={(file) =>
-            setFormData((prev) => ({ ...prev, video_file: file }))
-          }
-          maxSize={100}
-        />
 
         {/* Archivo adicional */}
-        <FileUpload
-          label="Archivo adicional (PDF, ZIP, etc.)"
-          accept=".pdf,.zip,.rar,.doc,.docx"
-          onChange={(file) =>
-            setFormData((prev) => ({ ...prev, archivo: file }))
-          }
-          maxSize={50}
-        />
+        <div>
+          <FileUpload
+            label="Archivo adicional (PDF, ZIP, etc.) - opcional"
+            accept=".pdf,.zip,.rar,.doc,.docx"
+            onChange={(file) =>
+              setFormData((prev) => ({ ...prev, archivo: file }))
+            }
+            maxSize={50}
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            Material complementario para descargar (apuntes, código, etc.)
+          </p>
+        </div>
 
         {/* Duración y Orden */}
         <div className="grid grid-cols-2 gap-4">
@@ -182,9 +208,13 @@ export default function SeccionFormDialog({
               value={formData.duracion_minutos}
               onChange={handleChange}
               required
-              min="0"
+              min="1"
+              placeholder="5"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d]"
             />
+            <p className="mt-1 text-xs text-gray-500">
+              Tiempo estimado de la lección
+            </p>
           </div>
 
           <div>
@@ -200,22 +230,38 @@ export default function SeccionFormDialog({
               min="1"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d]"
             />
+            <p className="mt-1 text-xs text-gray-500">
+              {initialData?.orden
+                ? "Posición actual"
+                : `Esta será la lección #${siguienteOrden}`}
+            </p>
           </div>
         </div>
 
         {/* Vista previa */}
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            name="es_preview"
-            id="es_preview"
-            checked={formData.es_preview}
-            onChange={handleChange}
-            className="w-4 h-4 text-[#f8b31d] border-gray-300 rounded focus:ring-[#f8b31d]"
-          />
-          <label htmlFor="es_preview" className="ml-2 text-sm text-gray-700">
-            Permitir vista previa gratuita
-          </label>
+        <div className="border border-blue-200 bg-blue-50 rounded-lg p-3">
+          <div className="flex items-start">
+            <input
+              type="checkbox"
+              name="es_preview"
+              id="es_preview"
+              checked={formData.es_preview}
+              onChange={handleChange}
+              className="w-4 h-4 text-[#f8b31d] border-gray-300 rounded focus:ring-[#f8b31d] mt-0.5"
+            />
+            <div className="ml-2">
+              <label
+                htmlFor="es_preview"
+                className="text-sm font-medium text-gray-700"
+              >
+                Permitir vista previa gratuita
+              </label>
+              <p className="text-xs text-gray-600 mt-1">
+                Los usuarios podrán ver esta lección sin estar inscritos en el
+                curso. Ideal para lecciones de introducción.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Botones */}

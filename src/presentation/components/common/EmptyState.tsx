@@ -24,9 +24,11 @@ export default function EmptyState({
           icon
         )}
       </div>
-      <p className="text-xl text-gray-600 mb-2">{title}</p>
+      <p className="text-xl text-gray-600 dark:text-gray-300 mb-2">{title}</p>
       {(message || description) && (
-        <p className="text-gray-500">{message || description}</p>
+        <p className="text-gray-500 dark:text-gray-400">
+          {message || description}
+        </p>
       )}
       {action && <div className="mt-4">{action}</div>}
     </div>

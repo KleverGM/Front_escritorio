@@ -5,6 +5,7 @@ import type {
   UsuarioFormData,
   CambiarPasswordData,
   UsuarioFiltros,
+  UsuarioEstadisticas,
 } from "../../domain/usuarios/usuario.types";
 
 export const usuarioService = {
@@ -36,7 +37,17 @@ export const usuarioService = {
    * Obtener perfil del usuario actual
    */
   getProfile: async () => {
-    const response = await authHttp.get<UsuarioDetalle>("/users/profile/");
+    const response = await authHttp.get<UsuarioDetalle>("/users/perfil/");
+    return response.data;
+  },
+
+  /**
+   * Obtener estadísticas del usuario actual
+   */
+  getEstadisticas: async () => {
+    const response = await authHttp.get<UsuarioEstadisticas>(
+      "/users/estadisticas/",
+    );
     return response.data;
   },
 
@@ -61,7 +72,7 @@ export const usuarioService = {
    */
   updateProfile: async (data: Partial<UsuarioFormData>) => {
     const response = await authHttp.patch<UsuarioDetalle>(
-      "/users/profile/",
+      "/users/perfil/",
       data,
     );
     return response.data;
@@ -88,8 +99,10 @@ export const usuarioService = {
    * Cambiar mi contraseña
    */
   cambiarMiPassword: async (data: CambiarPasswordData) => {
-    const response = await authHttp.post("/users/cambiar_password/", {
-      old_password: data.old_password,
+    const profile = await authHttp.get<UsuarioDetalle>("/users/perfil/");
+    const userId = (profile.data as any)?.id;
+    const response = await authHttp.post(`/users/${userId}/cambiar_password/`, {
+      current_password: data.old_password,
       new_password: data.new_password,
     });
     return response.data;

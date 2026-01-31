@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { cursoService } from "../../../../application/cursos/curso.service";
+import { useAuth } from "../../../../application/auth/useAuth";
 import {
   moduloService,
   seccionService,
@@ -15,6 +16,7 @@ import { SeccionFormDialog } from "../../../components/secciones";
 export default function GestionModulos() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const cursoId = parseInt(id || "0");
 
   const [curso, setCurso] = useState<CursoDetalle | null>(null);
@@ -40,13 +42,26 @@ export default function GestionModulos() {
         cursoService.getById(cursoId),
         moduloService.getByCursoId(cursoId),
       ]);
+
+      // Verificar permisos: si es instructor, debe ser el dueño del curso
+      const userRole = user?.tipo_usuario || user?.perfil || user?.role;
+      if (userRole === "instructor") {
+        const instructorId = cursoData.instructor?.id || cursoData.instructor;
+        const userId = user?.id;
+
+        if (instructorId !== userId) {
+          setError("No tienes permisos para gestionar este curso");
+          return;
+        }
+      }
+
       setCurso(cursoData);
       // La respuesta puede venir como array directo o dentro de 'results'
-      setModulos(
-        Array.isArray(modulosData)
-          ? modulosData
-          : (modulosData as any)?.results || [],
-      );
+      const modulosArray = Array.isArray(modulosData)
+        ? modulosData
+        : (modulosData as any)?.results || [];
+
+      setModulos(modulosArray);
     } catch (err: any) {
       setError(err?.response?.data?.detail || "Error al cargar datos");
     } finally {
@@ -85,7 +100,9 @@ export default function GestionModulos() {
   };
 
   const handleEditSeccion = (seccion: any) => {
-    setSelectedModuloId(seccion.modulo_id);
+    const moduloId = seccion.modulo_id ?? seccion.modulo;
+    if (!moduloId) return;
+    setSelectedModuloId(moduloId);
     setEditingSeccion(seccion);
     setShowSeccionDialog(true);
   };
@@ -116,19 +133,24 @@ export default function GestionModulos() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
   }
 
+  // Determinar ruta de retorno según rol
+  const userRole = user?.tipo_usuario || user?.perfil || user?.role;
+  const cursosRoute =
+    userRole === "instructor" ? "/app/instructor/cursos" : "/app/admin/cursos";
+
   if (error || !curso) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
         <ErrorMessage message={error || "Curso no encontrado"} />
         <Link
-          to="/app/admin/cursos"
-          className="mt-4 inline-block text-blue-600 hover:underline"
+          to={cursosRoute}
+          className="mt-4 inline-block text-blue-600 dark:text-blue-400 hover:underline"
         >
           ← Volver a cursos
         </Link>
@@ -137,23 +159,25 @@ export default function GestionModulos() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <Link
-            to="/app/admin/cursos"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
+            to={cursosRoute}
+            className="inline-flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mb-4"
           >
             ← Volver a Cursos
           </Link>
 
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 Gestión de Módulos
               </h1>
-              <p className="text-gray-600 mt-1">{curso.titulo}</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
+                {curso.titulo}
+              </p>
             </div>
             <button
               onClick={() => {
@@ -171,26 +195,30 @@ export default function GestionModulos() {
         <Card className="mb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <p className="text-sm text-gray-600">Categoría</p>
-              <p className="text-lg font-semibold text-gray-900">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Categoría
+              </p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {curso.categoria}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Nivel</p>
-              <p className="text-lg font-semibold text-gray-900">
+              <p className="text-sm text-gray-600 dark:text-gray-300">Nivel</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {curso.nivel}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Precio</p>
-              <p className="text-lg font-semibold text-gray-900">
+              <p className="text-sm text-gray-600 dark:text-gray-300">Precio</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 ${parseFloat(curso.precio).toFixed(2)}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Módulos</p>
-              <p className="text-lg font-semibold text-gray-900">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Módulos
+              </p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {modulos.length}
               </p>
             </div>
@@ -214,10 +242,10 @@ export default function GestionModulos() {
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 No hay módulos
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
                 Comienza creando el primer módulo de este curso
               </p>
               <button
@@ -258,6 +286,7 @@ export default function GestionModulos() {
           }}
           onSubmit={editingModulo ? handleEditModulo : handleCreateModulo}
           cursoId={cursoId}
+          totalModulos={modulos.length}
           initialData={editingModulo || undefined}
           title={editingModulo ? "Editar Módulo" : "Crear Módulo"}
         />
@@ -275,6 +304,10 @@ export default function GestionModulos() {
             moduloId={selectedModuloId}
             initialData={editingSeccion || undefined}
             title={editingSeccion ? "Editar Sección" : "Crear Sección"}
+            totalSecciones={
+              modulos.find((m) => m.id === selectedModuloId)?.secciones
+                ?.length || 0
+            }
           />
         )}
       </div>

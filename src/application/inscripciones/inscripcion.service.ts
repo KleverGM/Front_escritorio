@@ -13,8 +13,7 @@ export const inscripcionService = {
    */
   getAll: async (filtros?: InscripcionFiltros) => {
     const params: any = { page_size: 100 };
-    if (filtros?.curso_id) params.curso_id = filtros.curso_id;
-    if (filtros?.usuario_id) params.usuario_id = filtros.usuario_id;
+    if (filtros?.curso_id) params.curso = filtros.curso_id;
     if (filtros?.completado !== undefined)
       params.completado = filtros.completado;
 
@@ -75,10 +74,12 @@ export const inscripcionService = {
    * Obtener mis inscripciones (estudiante)
    */
   getMisInscripciones: async () => {
-    const response = await authHttp.get<Inscripcion[]>(
-      "/inscripciones/mis_inscripciones/",
-    );
-    return response.data;
+    const response = await authHttp.get<{
+      count?: number;
+      results?: Inscripcion[];
+    }>("/inscripciones/");
+    const data = response.data as any;
+    return (data?.results ?? data) as Inscripcion[];
   },
 
   /**
@@ -86,20 +87,24 @@ export const inscripcionService = {
    */
   marcarSeccionCompletada: async (seccionId: number) => {
     const response = await authHttp.post<ProgresoSeccion>(
-      `/secciones/${seccionId}/marcar_completada/`,
+      `/secciones/${seccionId}/marcar_completado/`,
     );
     return response.data;
   },
 
   /**
-   * Obtener progreso de un curso
+   * Obtener progreso por sección (estudiante)
    */
-  getProgreso: async (inscripcionId: number) => {
+  getProgresoSecciones: async (cursoId: number) => {
     const response = await authHttp.get<{
-      progreso: number;
-      secciones_completadas: number;
-      total_secciones: number;
-    }>(`/inscripciones/${inscripcionId}/progreso/`);
-    return response.data;
+      count?: number;
+      results?: ProgresoSeccion[];
+    }>("/progreso-secciones/", {
+      params: { seccion__modulo__curso: cursoId },
+    });
+    const data = response.data as any;
+    return (data?.results ?? data) as ProgresoSeccion[];
   },
+
+  // Nota: no existe endpoint /inscripciones/:id/progreso/ en el backend.
 };

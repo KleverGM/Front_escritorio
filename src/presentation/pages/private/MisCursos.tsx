@@ -43,19 +43,23 @@ export default function MisCursos() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-950 p-6 flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Mis Cursos</h1>
-          <p className="text-gray-600 mt-1">Continúa donde lo dejaste</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Mis Cursos
+          </h1>
+          <p className="text-gray-600 dark:text-slate-400 mt-1">
+            Continúa donde lo dejaste
+          </p>
         </div>
 
         {/* Filtros */}
@@ -65,7 +69,7 @@ export default function MisCursos() {
             className={`px-4 py-2 rounded-lg ${
               filter === "todos"
                 ? "bg-[#f8b31d] text-white"
-                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 dark:bg-slate-900 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-800"
             }`}
           >
             Todos ({inscripciones.length})
@@ -75,7 +79,7 @@ export default function MisCursos() {
             className={`px-4 py-2 rounded-lg ${
               filter === "en-progreso"
                 ? "bg-[#f8b31d] text-white"
-                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 dark:bg-slate-900 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-800"
             }`}
           >
             En Progreso (
@@ -90,7 +94,7 @@ export default function MisCursos() {
             className={`px-4 py-2 rounded-lg ${
               filter === "completados"
                 ? "bg-[#f8b31d] text-white"
-                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 dark:bg-slate-900 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-800"
             }`}
           >
             Completados ({inscripciones.filter((i) => i.completado).length})
@@ -120,10 +124,10 @@ export default function MisCursos() {
             {filteredInscripciones.map((inscripcion) => (
               <Card key={inscripcion.id} hoverable>
                 <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     {inscripcion.curso.titulo}
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-slate-400">
                     {inscripcion.curso.instructor.first_name}{" "}
                     {inscripcion.curso.instructor.last_name}
                   </p>
@@ -148,25 +152,33 @@ export default function MisCursos() {
                       En progreso
                     </span>
                   ) : (
-                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium dark:bg-slate-800 dark:text-slate-300">
                       No iniciado
                     </span>
                   )}
 
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 dark:text-slate-400">
                     {new Date(
                       inscripcion.fecha_inscripcion,
                     ).toLocaleDateString()}
                   </span>
                 </div>
 
-                {/* Botón */}
-                <Link
-                  to={`/app/cursos/${inscripcion.curso.id}/contenido`}
-                  className="block w-full text-center px-4 py-2 bg-[#f8b31d] text-white rounded-lg hover:bg-[#e0a219]"
-                >
-                  {inscripcion.progreso > 0 ? "Continuar" : "Comenzar"}
-                </Link>
+                {/* Botones */}
+                <div className="flex flex-col gap-2">
+                  <Link
+                    to={`/app/cursos/${inscripcion.curso.id}/contenido`}
+                    className="block w-full text-center px-4 py-2 bg-[#f8b31d] text-white rounded-lg hover:bg-[#e0a219]"
+                  >
+                    {inscripcion.progreso > 0 ? "Continuar" : "Comenzar"}
+                  </Link>
+                  <Link
+                    to={`/app/cursos/${inscripcion.curso.id}/resenas`}
+                    className="block w-full text-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                  >
+                    Ver reseñas
+                  </Link>
+                </div>
               </Card>
             ))}
           </div>

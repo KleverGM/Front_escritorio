@@ -83,11 +83,13 @@ export default function GestionMisCursos() {
   });
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Mis Cursos</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Mis Cursos
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">
             Administra y edita tus cursos
           </p>
         </div>
@@ -124,12 +126,12 @@ export default function GestionMisCursos() {
           {cursosOrdenados.map((curso) => (
             <div
               key={curso.id}
-              className={`bg-white rounded-lg shadow hover:shadow-lg transition-shadow ${
+              className={`bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow ${
                 !curso.activo ? "opacity-60" : ""
               }`}
             >
               {/* Imagen del curso */}
-              <div className="h-48 bg-gray-200 rounded-t-lg overflow-hidden">
+              <div className="h-48 bg-gray-200 dark:bg-gray-800 rounded-t-lg overflow-hidden relative">
                 {curso.imagen_url ? (
                   <img
                     src={curso.imagen_url}
@@ -162,14 +164,14 @@ export default function GestionMisCursos() {
 
               {/* Contenido */}
               <div className="p-4">
-                <h3 className="font-bold text-lg mb-2 line-clamp-2">
+                <h3 className="font-bold text-lg mb-2 line-clamp-2 text-gray-900 dark:text-gray-100">
                   {curso.titulo}
                 </h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
                   {curso.descripcion}
                 </p>
 
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300 mb-3">
                   <div className="flex items-center gap-1">
                     <svg
                       className="w-4 h-4"
@@ -206,18 +208,24 @@ export default function GestionMisCursos() {
                 </div>
 
                 {/* Acciones */}
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <Link
-                    to={`/app/instructor/cursos/${curso.id}/editar`}
-                    className="flex-1 px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-center text-sm"
+                    to={`/app/instructor/cursos/${curso.id}/estadisticas`}
+                    className="px-3 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-center text-sm"
                   >
-                    Editar
+                    📊 Stats
                   </Link>
                   <Link
                     to={`/app/instructor/cursos/${curso.id}/modulos`}
-                    className="flex-1 px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-center text-sm"
+                    className="px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-center text-sm"
                   >
-                    Módulos
+                    📚 Módulos
+                  </Link>
+                  <Link
+                    to={`/app/instructor/cursos/${curso.id}/editar`}
+                    className="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-center text-sm"
+                  >
+                    ✏️ Editar
                   </Link>
                   <button
                     onClick={() => {
@@ -272,8 +280,8 @@ export default function GestionMisCursos() {
             {toggling
               ? "Procesando..."
               : cursoToToggle?.activo
-              ? "Sí, desactivar"
-              : "Sí, activar"}
+                ? "Sí, desactivar"
+                : "Sí, activar"}
           </button>
           <button
             onClick={() => {

@@ -132,16 +132,16 @@ export default function GestionCursos() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 overflow-x-hidden">
       <div className="max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 Gestión de Cursos
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
                 Administra todos los cursos de la plataforma
               </p>
             </div>
@@ -154,7 +154,7 @@ export default function GestionCursos() {
               </Link>
               <Link
                 to="/app/admin"
-                className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
                 ← Volver al Dashboard
               </Link>
@@ -162,11 +162,11 @@ export default function GestionCursos() {
           </div>
 
           {/* Búsqueda y filtros */}
-          <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-800">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Búsqueda */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                   Buscar
                 </label>
                 <input
@@ -174,19 +174,19 @@ export default function GestionCursos() {
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                   placeholder="Título o descripción..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 />
               </div>
 
               {/* Filtro por categoría */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                   Categoría
                 </label>
                 <select
                   value={filterCategoria}
                   onChange={(e) => handleFilterCategoria(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 >
                   <option value="">Todas las categorías</option>
                   <option value="programacion">Programación</option>
@@ -202,13 +202,13 @@ export default function GestionCursos() {
 
               {/* Filtro por nivel */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                   Nivel
                 </label>
                 <select
                   value={filterNivel}
                   onChange={(e) => handleFilterNivel(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 >
                   <option value="">Todos los niveles</option>
                   <option value="principiante">Principiante</option>
@@ -219,13 +219,13 @@ export default function GestionCursos() {
 
               {/* Filtro por estado */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                   Estado
                 </label>
                 <select
                   value={filterActivo}
                   onChange={(e) => handleFilterActivo(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#f8b31d] focus:border-transparent"
                 >
                   <option value="">Todos</option>
                   <option value="true">Activos</option>
@@ -243,7 +243,7 @@ export default function GestionCursos() {
         {!loading && !error && (
           <>
             {/* Contador */}
-            <div className="mb-4 text-sm text-gray-600">
+            <div className="mb-4 text-sm text-gray-600 dark:text-gray-300">
               {cursos.length} curso{cursos.length !== 1 ? "s" : ""} encontrado
               {cursos.length !== 1 ? "s" : ""}
             </div>
